@@ -5,6 +5,7 @@
  */
 package kasiracc;
 
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 /**
@@ -17,6 +18,8 @@ public class FrameStat extends javax.swing.JFrame {
      * Creates new form FrameStat
      */
     public FrameStat() {
+        setExtendedState(JFrame.MAXIMIZED_BOTH); 
+        setUndecorated(true);
         initComponents();
     }
 
@@ -56,21 +59,21 @@ public class FrameStat extends javax.swing.JFrame {
 
         jPanel1.setBackground(new java.awt.Color(70, 87, 117));
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/Icon_awesome_shopping_cart.png"))); // NOI18N
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/btn_cart.png"))); // NOI18N
         jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jLabel1MouseClicked(evt);
             }
         });
 
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/Icon_awesome_box_open.png"))); // NOI18N
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/btn_inventory.png"))); // NOI18N
         jLabel2.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jLabel2MouseClicked(evt);
             }
         });
 
-        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/Icon_open_graph.png"))); // NOI18N
+        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/btn_stat_selected.png"))); // NOI18N
 
         jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/Icon_feather_power.png"))); // NOI18N
         jLabel4.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -88,26 +91,23 @@ public class FrameStat extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(36, 36, 36)
                         .addComponent(jLabel4))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(28, 28, 28)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING))))
-                .addContainerGap(32, Short.MAX_VALUE))
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel3))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(86, 86, 86)
+                .addGap(100, 100, 100)
                 .addComponent(jLabel1)
-                .addGap(46, 46, 46)
+                .addGap(0, 0, 0)
                 .addComponent(jLabel2)
-                .addGap(48, 48, 48)
+                .addGap(0, 0, 0)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel4)
-                .addGap(69, 69, 69))
+                .addGap(99, 99, 99))
         );
 
         jPanel2.setBackground(new java.awt.Color(245, 249, 252));
@@ -221,7 +221,7 @@ public class FrameStat extends javax.swing.JFrame {
                         .addComponent(jLabel5)
                         .addGap(702, 702, 702)
                         .addComponent(jLabel22)))
-                .addContainerGap(48, Short.MAX_VALUE))
+                .addContainerGap(54, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -257,7 +257,7 @@ public class FrameStat extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(0, 0, 0)
                 .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -278,13 +278,13 @@ public class FrameStat extends javax.swing.JFrame {
 
     private void jLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseClicked
         FrameCashier fc = new FrameCashier();
-        fc.show();
+        fc.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jLabel1MouseClicked
 
     private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
         FrameInventory fi = new FrameInventory();
-        fi.show();
+        fi.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jLabel2MouseClicked
 
