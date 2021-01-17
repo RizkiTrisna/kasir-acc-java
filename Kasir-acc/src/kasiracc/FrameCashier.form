@@ -140,10 +140,10 @@
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
                       <Component id="jScrollPane1" max="32767" attributes="0"/>
                       <Group type="102" attributes="0">
-                          <Component id="tf_cashier_cari" min="-2" pref="377" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
-                          <Component id="btn_cashier_cari" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
+                          <Component id="tf_cashier_cari" min="-2" pref="443" max="-2" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Component id="btn_cashier_refresh" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="41" max="-2" attributes="0"/>
                           <Component id="btn_cashier_batalBeli" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -157,8 +157,8 @@
                   <EmptySpace min="-2" pref="100" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="btn_cashier_batalBeli" min="-2" max="-2" attributes="0"/>
-                      <Component id="btn_cashier_cari" min="-2" max="-2" attributes="0"/>
                       <Component id="tf_cashier_cari" min="-2" pref="60" max="-2" attributes="0"/>
+                      <Component id="btn_cashier_refresh" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="55" max="-2" attributes="0"/>
                   <Component id="jScrollPane1" min="-2" pref="777" max="-2" attributes="0"/>
@@ -177,13 +177,6 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="tf_cashier_cariActionPerformed"/>
           </Events>
-        </Component>
-        <Component class="javax.swing.JLabel" name="btn_cashier_cari">
-          <Properties>
-            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/asset/btn_cari.png"/>
-            </Property>
-          </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="btn_cashier_batalBeli">
           <Properties>
@@ -211,6 +204,16 @@
             </Component>
           </SubComponents>
         </Container>
+        <Component class="javax.swing.JLabel" name="btn_cashier_refresh">
+          <Properties>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/asset/btn_refresh.png"/>
+            </Property>
+          </Properties>
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="btn_cashier_refreshMouseClicked"/>
+          </Events>
+        </Component>
       </SubComponents>
     </Container>
     <Container class="javax.swing.JPanel" name="jPanel3">

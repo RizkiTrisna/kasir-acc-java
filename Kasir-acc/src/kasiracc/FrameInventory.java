@@ -11,6 +11,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.NumberFormat;
+import java.text.ParsePosition;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.logging.Level;
@@ -32,7 +34,7 @@ public class FrameInventory extends javax.swing.JFrame {
     static Connection conn;
     static Statement stmt;
     static ResultSet rs;
-    private DefaultTableModel tmodel;
+    private static DefaultTableModel tmodel;
 
     private ArrayList dataCbb = new ArrayList();
     barang ob_barang;
@@ -95,9 +97,47 @@ public class FrameInventory extends javax.swing.JFrame {
         tmodel.addColumn("Sisa stok");
     }
 
+    public static void refreshTableRemote() {
+        tmodel = new DefaultTableModel();
+        tabel_barang.setModel(tmodel);
+        tmodel.addColumn("ID");
+        tmodel.addColumn("Nama barang");
+        tmodel.addColumn("Jenis barang");
+        tmodel.addColumn("Harga pokok");
+        tmodel.addColumn("Harga jual");
+        tmodel.addColumn("Sisa stok");
+        try {
+
+            // buat objek statement
+            stmt = conn.createStatement();
+
+            // buat query ke database
+            String query = "Select barang.id_barang as id_barang, barang.nama_barang as nama_barang, jenis_barang.nama_jenis as nama_jenis, harga_jual, harga_pokok, stok_barang from barang, jenis_barang WHERE barang.id_jenis_barang=jenis_barang.id_jenis order by id_barang";
+
+            rs = stmt.executeQuery(query);
+
+            while (rs.next()) {
+                Object[] o = new Object[6];
+                o[0] = rs.getInt("id_barang") + "";
+                o[1] = rs.getString("nama_barang");
+                o[2] = rs.getString("nama_jenis");
+                o[3] = rs.getInt("harga_pokok");
+                o[4] = rs.getInt("harga_jual");
+                o[5] = rs.getInt("stok_barang");
+                tmodel.addRow(o);
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        JOptionPane.showMessageDialog(null, "Tabel inventory direfresh");
+    }
+
     public void refreshTabel() {
         prepareTable();
         tampilTabelBarang();
+        JOptionPane.showMessageDialog(null, "Tabel inventory direfresh");
     }
 
     private void tampilTabelBarang() {
@@ -257,7 +297,6 @@ public class FrameInventory extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         tf_inventory_cari = new javax.swing.JTextField();
-        lbl_inventory_cari = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tabel_barang = new javax.swing.JTable();
         lbl_inventory_refresh = new javax.swing.JLabel();
@@ -350,11 +389,9 @@ public class FrameInventory extends javax.swing.JFrame {
                 tf_inventory_cariActionPerformed(evt);
             }
         });
-
-        lbl_inventory_cari.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/btn_cari.png"))); // NOI18N
-        lbl_inventory_cari.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                lbl_inventory_cariMouseClicked(evt);
+        tf_inventory_cari.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                tf_inventory_cariKeyReleased(evt);
             }
         });
 
@@ -403,10 +440,8 @@ public class FrameInventory extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 987, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(jPanel2Layout.createSequentialGroup()
-                    .addComponent(tf_inventory_cari, javax.swing.GroupLayout.PREFERRED_SIZE, 377, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(30, 30, 30)
-                    .addComponent(lbl_inventory_cari)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(tf_inventory_cari, javax.swing.GroupLayout.PREFERRED_SIZE, 515, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(29, 29, 29)
                     .addComponent(lbl_inventory_refresh)
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(lbl_inventory_tambahBarang)))
@@ -417,7 +452,6 @@ public class FrameInventory extends javax.swing.JFrame {
         .addGroup(jPanel2Layout.createSequentialGroup()
             .addGap(100, 100, 100)
             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(lbl_inventory_cari)
                 .addComponent(tf_inventory_cari, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addComponent(lbl_inventory_refresh)
                 .addComponent(lbl_inventory_tambahBarang))
@@ -477,8 +511,18 @@ public class FrameInventory extends javax.swing.JFrame {
     jLabel20.setText(":");
 
     tf_inventory_hrgPokok.setFont(new java.awt.Font("Assistant SemiBold", 0, 32)); // NOI18N
+    tf_inventory_hrgPokok.addKeyListener(new java.awt.event.KeyAdapter() {
+        public void keyTyped(java.awt.event.KeyEvent evt) {
+            tf_inventory_hrgPokokKeyTyped(evt);
+        }
+    });
 
     tf_inventory_nmBarang.setFont(new java.awt.Font("Assistant SemiBold", 0, 32)); // NOI18N
+    tf_inventory_nmBarang.addKeyListener(new java.awt.event.KeyAdapter() {
+        public void keyTyped(java.awt.event.KeyEvent evt) {
+            tf_inventory_nmBarangKeyTyped(evt);
+        }
+    });
 
     tf_inventory_hrgJual.setFont(new java.awt.Font("Assistant SemiBold", 0, 32)); // NOI18N
 
@@ -729,6 +773,12 @@ public class FrameInventory extends javax.swing.JFrame {
             ob[4] = stok;
             updateData(id_barang, ob);
 
+            // set textfield null
+            tf_inventory_nmBarang.setText("");
+            tf_inventory_hrgJual.setText("");
+            tf_inventory_hrgPokok.setText("");
+            tf_inventory_stok.setText("");
+            ob_barang = null;
         } else {
             JOptionPane.showMessageDialog(null, "Terdapat field yang masih kosong atau data tidak diambil dari tabel dengan benar");
         }
@@ -759,19 +809,16 @@ public class FrameInventory extends javax.swing.JFrame {
         // hapus data di object barang
         ob_barang = new barang();
     }//GEN-LAST:event_lbl_inventory_cancelMouseClicked
-
-    private void lbl_inventory_cariMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_inventory_cariMouseClicked
-        String indexCari = tf_inventory_cari.getText();
-        prepareTable();
-        tampilTabelBarang(indexCari);
-    }//GEN-LAST:event_lbl_inventory_cariMouseClicked
-
+    public void setKata() {
+        tf_inventory_cari.setText("Cari dong");
+    }
     private void cb_inventory_jenisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cb_inventory_jenisActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_cb_inventory_jenisActionPerformed
 
     private void lbl_inventory_refreshMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_inventory_refreshMouseClicked
         refreshTabel();
+        tf_inventory_cari.setText("");
     }//GEN-LAST:event_lbl_inventory_refreshMouseClicked
 
     private void lbl_inventory_tambahBarangMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_inventory_tambahBarangMouseClicked
@@ -789,6 +836,34 @@ public class FrameInventory extends javax.swing.JFrame {
 
         ob_barang = new barang();
     }//GEN-LAST:event_lbl_refresh_2MouseClicked
+
+    private void tf_inventory_cariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_inventory_cariKeyReleased
+        String indexCari = tf_inventory_cari.getText();
+        prepareTable();
+        tampilTabelBarang(indexCari);
+    }//GEN-LAST:event_tf_inventory_cariKeyReleased
+
+    private void tf_inventory_nmBarangKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_inventory_nmBarangKeyTyped
+
+    }//GEN-LAST:event_tf_inventory_nmBarangKeyTyped
+
+    private void tf_inventory_hrgPokokKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_inventory_hrgPokokKeyTyped
+
+//        String text = tf_inventory_hrgPokok.getText();
+//        NumberFormat formatter = NumberFormat.getInstance();
+//        ParsePosition pos = new ParsePosition(0);
+//        formatter.parse(text, pos);
+//        if (text.length() == pos.getIndex()){
+//            JOptionPane.showMessageDialog(null, "Nomor");
+//            
+//        } 
+//        
+//        if (tf_inventory_hrgPokok.getText().matches("-?\\d+(\\.\\d+)?")) {
+//        } else {
+//            JOptionPane.showMessageDialog(null, "Huruf");
+//            evt.consume();
+//        }
+    }//GEN-LAST:event_tf_inventory_hrgPokokKeyTyped
 
     /**
      * @param args the command line arguments
@@ -850,12 +925,11 @@ public class FrameInventory extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lbl_inventory_cancel;
-    private javax.swing.JLabel lbl_inventory_cari;
     private javax.swing.JLabel lbl_inventory_perbarui;
     private javax.swing.JLabel lbl_inventory_refresh;
     private javax.swing.JLabel lbl_inventory_tambahBarang;
     private javax.swing.JLabel lbl_refresh_2;
-    private javax.swing.JTable tabel_barang;
+    private static javax.swing.JTable tabel_barang;
     private javax.swing.JTextField tf_inventory_cari;
     private javax.swing.JTextField tf_inventory_hrgJual;
     private javax.swing.JTextField tf_inventory_hrgPokok;

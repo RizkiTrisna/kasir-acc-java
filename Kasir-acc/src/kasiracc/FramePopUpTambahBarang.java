@@ -30,7 +30,6 @@ public class FramePopUpTambahBarang extends javax.swing.JFrame {
     static Statement stmt;
     static ResultSet rs;
     
-    
     public FramePopUpTambahBarang() {
         setUndecorated(true);
         initComponents();
@@ -365,7 +364,7 @@ public class FramePopUpTambahBarang extends javax.swing.JFrame {
     }//GEN-LAST:event_cb_popupTambah_jenis_barangActionPerformed
 
     private void btn_popupTambah_tambahMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_popupTambah_tambahMouseClicked
-        int hasil = JOptionPane.showConfirmDialog(null, "Simpan perubahan barang ini?", "", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        int hasil = JOptionPane.showConfirmDialog(null, "Tambahkan barang?", "", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (hasil == JOptionPane.YES_OPTION && (!tf_popupTambah_namaBarang.getText().equals("") && !tf_popupTambah_hargaJual.getText().equals("") && !tf_popupTambah_hargaPokok.getText().equals("") && !tf_popupTambah_stok.getText().equals("")) ) {
             String nama_barang = tf_popupTambah_namaBarang.getText();
             int harga_pokok = Integer.parseInt(tf_popupTambah_hargaPokok.getText().toString());
@@ -379,6 +378,7 @@ public class FramePopUpTambahBarang extends javax.swing.JFrame {
             ob[3] = harga_pokok;
             ob[4] = stok;
             insertData(ob);
+            FrameInventory.refreshTableRemote();  
         } else {
             JOptionPane.showMessageDialog(null, "Terdapat field yang masih kosong");
         }

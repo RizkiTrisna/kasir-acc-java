@@ -14,7 +14,6 @@ import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import static kasiracc.FrameInventory.conn;
 
 /**
  *
@@ -25,30 +24,29 @@ public class FrameCashier extends javax.swing.JFrame {
     /**
      * Creates new form FrameCashier
      */
-    
     static Connection conn;
     static Statement stmt;
     static ResultSet rs;
     private DefaultTableModel tmodel;
 
-    
     public FrameCashier() {
-        setExtendedState(JFrame.MAXIMIZED_BOTH); 
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setUndecorated(true);
-        initComponents();try {
+        initComponents();
+        try {
             getKoneksi();
         } catch (SQLException ex) {
             Logger.getLogger(FrameInventory.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        lbl_cashier_total.setText("23235005");
+        prepareTable();
+        tampilTabelBarang();
     }
 
     private void getKoneksi() throws SQLException {
         koneksi kon = new koneksi();
         conn = kon.getConnection();
     }
-    
+
     private Object[] cariBarang(int id) {
         try {
             Object[] o = new Object[6];
@@ -159,10 +157,10 @@ public class FrameCashier extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         tf_cashier_cari = new javax.swing.JTextField();
-        btn_cashier_cari = new javax.swing.JLabel();
         btn_cashier_batalBeli = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tabel_barang = new javax.swing.JTable();
+        btn_cashier_refresh = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         tabel_beli = new javax.swing.JTable();
@@ -254,8 +252,6 @@ public class FrameCashier extends javax.swing.JFrame {
             }
         });
 
-        btn_cashier_cari.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/btn_cari.png"))); // NOI18N
-
         btn_cashier_batalBeli.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/btn_batal_beli.png"))); // NOI18N
 
         tabel_barang.setFont(new java.awt.Font("Assistant", 0, 20)); // NOI18N
@@ -275,6 +271,13 @@ public class FrameCashier extends javax.swing.JFrame {
     );
     jScrollPane1.setViewportView(tabel_barang);
 
+    btn_cashier_refresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/btn_refresh.png"))); // NOI18N
+    btn_cashier_refresh.addMouseListener(new java.awt.event.MouseAdapter() {
+        public void mouseClicked(java.awt.event.MouseEvent evt) {
+            btn_cashier_refreshMouseClicked(evt);
+        }
+    });
+
     javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
     jPanel2.setLayout(jPanel2Layout);
     jPanel2Layout.setHorizontalGroup(
@@ -284,10 +287,10 @@ public class FrameCashier extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                 .addComponent(jScrollPane1)
                 .addGroup(jPanel2Layout.createSequentialGroup()
-                    .addComponent(tf_cashier_cari, javax.swing.GroupLayout.PREFERRED_SIZE, 377, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(30, 30, 30)
-                    .addComponent(btn_cashier_cari)
-                    .addGap(30, 30, 30)
+                    .addComponent(tf_cashier_cari, javax.swing.GroupLayout.PREFERRED_SIZE, 443, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(18, 18, 18)
+                    .addComponent(btn_cashier_refresh)
+                    .addGap(41, 41, 41)
                     .addComponent(btn_cashier_batalBeli)))
             .addContainerGap(50, Short.MAX_VALUE))
     );
@@ -297,8 +300,8 @@ public class FrameCashier extends javax.swing.JFrame {
             .addGap(100, 100, 100)
             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addComponent(btn_cashier_batalBeli)
-                .addComponent(btn_cashier_cari)
-                .addComponent(tf_cashier_cari, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(tf_cashier_cari, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btn_cashier_refresh))
             .addGap(55, 55, 55)
             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 777, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addContainerGap(88, Short.MAX_VALUE))
@@ -533,6 +536,10 @@ public class FrameCashier extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jLabel1MouseClicked
 
+    private void btn_cashier_refreshMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_cashier_refreshMouseClicked
+        refreshTabel();
+    }//GEN-LAST:event_btn_cashier_refreshMouseClicked
+
     /**
      * @param args the command line arguments
      */
@@ -570,8 +577,8 @@ public class FrameCashier extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel btn_cashier_batalBeli;
-    private javax.swing.JLabel btn_cashier_cari;
     private javax.swing.JLabel btn_cashier_proses;
+    private javax.swing.JLabel btn_cashier_refresh;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
