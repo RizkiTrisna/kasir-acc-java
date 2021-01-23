@@ -5,10 +5,13 @@
  */
 package kasiracc;
 
+import java.awt.event.KeyEvent;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
@@ -27,7 +30,10 @@ public class FrameCashier extends javax.swing.JFrame {
     static Connection conn;
     static Statement stmt;
     static ResultSet rs;
-    private DefaultTableModel tmodel;
+    private DefaultTableModel tmodelBarang;
+    private static DefaultTableModel tmodelKeranjang;
+
+    private static Transaksi temp_transaksi;
 
     public FrameCashier() {
         setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -38,8 +44,11 @@ public class FrameCashier extends javax.swing.JFrame {
         } catch (SQLException ex) {
             Logger.getLogger(FrameInventory.class.getName()).log(Level.SEVERE, null, ex);
         }
-        prepareTable();
+        prepareTableBarang();
+        prepareTableKeranjang();
         tampilTabelBarang();
+        tampilKeranjang();
+
     }
 
     private void getKoneksi() throws SQLException {
@@ -74,20 +83,34 @@ public class FrameCashier extends javax.swing.JFrame {
         return null;
     }
 
-    private void prepareTable() {
-        tmodel = new DefaultTableModel();
-        tabel_barang.setModel(tmodel);
-        tmodel.addColumn("ID");
-        tmodel.addColumn("Nama barang");
-        tmodel.addColumn("Jenis barang");
-        tmodel.addColumn("Harga pokok");
-        tmodel.addColumn("Harga jual");
-        tmodel.addColumn("Sisa stok");
+    private void prepareTableBarang() {
+        tmodelBarang = new DefaultTableModel();
+        tabel_barang.setModel(tmodelBarang);
+        tmodelBarang.addColumn("ID");
+        tmodelBarang.addColumn("Nama barang");
+        tmodelBarang.addColumn("Jenis barang");
+        tmodelBarang.addColumn("Harga jual");
+        tmodelBarang.addColumn("Sisa stok");
     }
 
-    public void refreshTabel() {
-        prepareTable();
+    public void refreshTabelBarang() {
+        prepareTableBarang();
         tampilTabelBarang();
+    }
+
+    private static void prepareTableKeranjang() {
+        tmodelKeranjang = new DefaultTableModel();
+        tabel_keranjang.setModel(tmodelKeranjang);
+        tmodelKeranjang.addColumn("ID");
+        tmodelKeranjang.addColumn("Nama barang");
+        tmodelKeranjang.addColumn("Qty");
+        tmodelKeranjang.addColumn("Harga");
+        tmodelKeranjang.addColumn("Subtotal");
+    }
+
+    public static void refreshKeranjang() {
+        prepareTableKeranjang();
+        tampilKeranjang();
     }
 
     private void tampilTabelBarang() {
@@ -106,10 +129,9 @@ public class FrameCashier extends javax.swing.JFrame {
                 o[0] = rs.getInt("id_barang") + "";
                 o[1] = rs.getString("nama_barang");
                 o[2] = rs.getString("nama_jenis");
-                o[3] = rs.getInt("harga_pokok");
                 o[4] = rs.getInt("harga_jual");
                 o[5] = rs.getInt("stok_barang");
-                tmodel.addRow(o);
+                tmodelBarang.addRow(o);
 
             }
 
@@ -118,8 +140,94 @@ public class FrameCashier extends javax.swing.JFrame {
         }
     }
 
+    private static void tampilKeranjang() {
+        try {
+
+            // buat objek statement
+            stmt = conn.createStatement();
+
+            // buat query ke database
+            String query = "Select barang.nama_barang as nama_barang, harga_jual, stok_barang, temp_transaksi.id_barang as id_barang, temp_transaksi.id_admin as id_admin, qty, tanggal_pembelian "
+                    + "from barang, temp_transaksi, admin "
+                    + "WHERE barang.id_barang=temp_transaksi.id_barang and temp_transaksi.id_admin=admin.id_admin order by id_barang";
+
+            rs = stmt.executeQuery(query);
+            int all_subtotal = 0;
+            int all_total = 0;
+
+            while (rs.next()) {
+                Object[] o = new Object[6];
+                int id_barang = rs.getInt("id_barang");
+                String nama_barang = rs.getString("nama_barang");
+                int qty = rs.getInt("qty");
+                int harga_jual = rs.getInt("harga_jual");
+                int subtotal = qty * harga_jual;
+                o[0] = id_barang;
+                o[1] = nama_barang;
+                o[2] = qty;
+                o[3] = harga_jual;
+                o[4] = subtotal;
+                tmodelKeranjang.addRow(o);
+                all_subtotal += subtotal;
+            }
+            if (!tf_cashier_diskon.getText().equals("")) {
+                all_total = all_subtotal - Integer.parseInt(tf_cashier_diskon.getText());
+
+            } else {
+                all_total = all_subtotal;
+            }
+
+            //Tampilkan ke label
+            lbl_subtotal.setText(convertToCurrency((double) all_subtotal));
+            lbl_cashier_total.setText(convertToCurrency((double) all_total));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private int getSubtotalKeranjang() {
+        int all_subtotal = 0;
+        try {
+
+            // buat objek statement
+            stmt = conn.createStatement();
+
+            // buat query ke database
+            String query = "Select harga_jual, qty from barang, temp_transaksi where barang.id_barang=temp_transaksi.id_barang";
+
+            rs = stmt.executeQuery(query);
+
+            while (rs.next()) {
+                Object[] o = new Object[6];
+                int qty = rs.getInt("qty");
+                int harga_jual = rs.getInt("harga_jual");
+                int subtotal = qty * harga_jual;
+                all_subtotal += subtotal;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return all_subtotal;
+    }
+
+    private static String convertToCurrency(double number) {
+        DecimalFormat kursIndonesia = (DecimalFormat) DecimalFormat.getCurrencyInstance();
+        DecimalFormatSymbols formatRp = new DecimalFormatSymbols();
+
+        formatRp.setCurrencySymbol("Rp. ");
+        formatRp.setMonetaryDecimalSeparator(',');
+        formatRp.setGroupingSeparator('.');
+        kursIndonesia.setDecimalFormatSymbols(formatRp);
+        String result = kursIndonesia.format(number);
+
+        return result;
+    }
+
     private void tampilTabelBarang(String indexCari) {
         try {
+
             // buat objek statement
             stmt = conn.createStatement();
 
@@ -134,10 +242,9 @@ public class FrameCashier extends javax.swing.JFrame {
                 o[0] = rs.getInt("id_barang") + "";
                 o[1] = rs.getString("nama_barang");
                 o[2] = rs.getString("nama_jenis");
-                o[3] = rs.getInt("harga_pokok");
                 o[4] = rs.getInt("harga_jual");
                 o[5] = rs.getInt("stok_barang");
-                tmodel.addRow(o);
+                tmodelBarang.addRow(o);
 
             }
 
@@ -163,7 +270,7 @@ public class FrameCashier extends javax.swing.JFrame {
         btn_cashier_refresh = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        tabel_beli = new javax.swing.JTable();
+        tabel_keranjang = new javax.swing.JTable();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
@@ -251,8 +358,18 @@ public class FrameCashier extends javax.swing.JFrame {
                 tf_cashier_cariActionPerformed(evt);
             }
         });
+        tf_cashier_cari.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                tf_cashier_cariKeyReleased(evt);
+            }
+        });
 
         btn_cashier_batalBeli.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/btn_batal_beli.png"))); // NOI18N
+        btn_cashier_batalBeli.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btn_cashier_batalBeliMouseClicked(evt);
+            }
+        });
 
         tabel_barang.setFont(new java.awt.Font("Assistant", 0, 20)); // NOI18N
         tabel_barang.setModel(new javax.swing.table.DefaultTableModel(
@@ -269,6 +386,11 @@ public class FrameCashier extends javax.swing.JFrame {
 
         {public boolean isCellEditable(int row, int column){return false;}}
     );
+    tabel_barang.addMouseListener(new java.awt.event.MouseAdapter() {
+        public void mouseClicked(java.awt.event.MouseEvent evt) {
+            tabel_barangMouseClicked(evt);
+        }
+    });
     jScrollPane1.setViewportView(tabel_barang);
 
     btn_cashier_refresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/btn_refresh.png"))); // NOI18N
@@ -309,7 +431,8 @@ public class FrameCashier extends javax.swing.JFrame {
 
     jPanel3.setBackground(new java.awt.Color(255, 255, 255));
 
-    tabel_beli.setModel(new javax.swing.table.DefaultTableModel(
+    tabel_keranjang.setFont(new java.awt.Font("Assistant", 0, 20)); // NOI18N
+    tabel_keranjang.setModel(new javax.swing.table.DefaultTableModel(
         new Object [][] {
             {null, null, null, null},
             {null, null, null, null},
@@ -320,7 +443,12 @@ public class FrameCashier extends javax.swing.JFrame {
             "Title 1", "Title 2", "Title 3", "Title 4"
         }
     ));
-    jScrollPane2.setViewportView(tabel_beli);
+    tabel_keranjang.addMouseListener(new java.awt.event.MouseAdapter() {
+        public void mouseClicked(java.awt.event.MouseEvent evt) {
+            tabel_keranjangMouseClicked(evt);
+        }
+    });
+    jScrollPane2.setViewportView(tabel_keranjang);
 
     jLabel7.setFont(new java.awt.Font("Assistant", 1, 32)); // NOI18N
     jLabel7.setForeground(new java.awt.Color(112, 112, 112));
@@ -388,8 +516,24 @@ public class FrameCashier extends javax.swing.JFrame {
     lbl_cashier_kembalian.setText("0");
 
     tf_cashier_dibayarkan.setFont(new java.awt.Font("Assistant SemiBold", 0, 32)); // NOI18N
+    tf_cashier_dibayarkan.addKeyListener(new java.awt.event.KeyAdapter() {
+        public void keyReleased(java.awt.event.KeyEvent evt) {
+            tf_cashier_dibayarkanKeyReleased(evt);
+        }
+        public void keyTyped(java.awt.event.KeyEvent evt) {
+            tf_cashier_dibayarkanKeyTyped(evt);
+        }
+    });
 
     tf_cashier_diskon.setFont(new java.awt.Font("Assistant SemiBold", 0, 32)); // NOI18N
+    tf_cashier_diskon.addKeyListener(new java.awt.event.KeyAdapter() {
+        public void keyReleased(java.awt.event.KeyEvent evt) {
+            tf_cashier_diskonKeyReleased(evt);
+        }
+        public void keyTyped(java.awt.event.KeyEvent evt) {
+            tf_cashier_diskonKeyTyped(evt);
+        }
+    });
 
     javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
     jPanel3.setLayout(jPanel3Layout);
@@ -516,7 +660,8 @@ public class FrameCashier extends javax.swing.JFrame {
     }//GEN-LAST:event_btn_cashier_prosesMouseClicked
 
     private void jLabel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseClicked
-        if (JOptionPane.showConfirmDialog(null, "Apakah anda ingin menutup aplikasi ini?", "", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+
+        if (JOptionPane.showConfirmDialog(null, "Apakah anda ingin menutup aplikasi ini?", "", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION && session.endSession()) {
             System.exit(0);
         }
     }//GEN-LAST:event_jLabel4MouseClicked
@@ -537,8 +682,129 @@ public class FrameCashier extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel1MouseClicked
 
     private void btn_cashier_refreshMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_cashier_refreshMouseClicked
-        refreshTabel();
+        refreshTabelBarang();
     }//GEN-LAST:event_btn_cashier_refreshMouseClicked
+
+    private void tf_cashier_cariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_cashier_cariKeyReleased
+        String indexCari = tf_cashier_cari.getText();
+        prepareTableBarang();
+        tampilTabelBarang(indexCari);
+    }//GEN-LAST:event_tf_cashier_cariKeyReleased
+
+    private void tabel_barangMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabel_barangMouseClicked
+        // Mengambil data id barang di tabel
+        int col = 0;
+        int row = tabel_barang.getSelectedRow();
+        int id_barang = Integer.parseInt(tabel_barang.getValueAt(row, col).toString());
+        Object[] ob = cariBarang(id_barang);
+
+        Barang.setId_barang(id_barang);
+        Barang.setNama_barang(ob[1].toString());
+        Barang.setHarga_jual(Integer.parseInt(ob[4].toString()));
+        Barang.setHarga_pokok(Integer.parseInt(ob[3].toString()));
+        Barang.setStok(Integer.parseInt(ob[5].toString()));
+
+        new FrameTableSearchCashierPopUp().setVisible(true);
+    }//GEN-LAST:event_tabel_barangMouseClicked
+
+    private void btn_cashier_batalBeliMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_cashier_batalBeliMouseClicked
+//         Hapus data yang ada di tabel keranjang temporary
+
+    }//GEN-LAST:event_btn_cashier_batalBeliMouseClicked
+
+    private void tf_cashier_diskonKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_cashier_diskonKeyTyped
+        filterAngka(evt);
+
+    }//GEN-LAST:event_tf_cashier_diskonKeyTyped
+
+    private void tf_cashier_dibayarkanKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_cashier_dibayarkanKeyTyped
+        filterAngka(evt);
+    }//GEN-LAST:event_tf_cashier_dibayarkanKeyTyped
+
+    private void tf_cashier_diskonKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_cashier_diskonKeyReleased
+        if (!tf_cashier_diskon.getText().equals("")) {
+            int total = getSubtotalKeranjang() - Integer.parseInt(tf_cashier_diskon.getText());
+
+            lbl_cashier_total.setText(convertToCurrency(total));
+        } else {
+            lbl_cashier_total.setText(convertToCurrency(getSubtotalKeranjang()) + "");
+        }
+    }//GEN-LAST:event_tf_cashier_diskonKeyReleased
+
+    private void tf_cashier_dibayarkanKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_cashier_dibayarkanKeyReleased
+
+        if (!tf_cashier_dibayarkan.getText().equals("")) {
+            int dibayarkan = Integer.parseInt(tf_cashier_dibayarkan.getText());
+            int total = getSubtotalKeranjang() - Integer.parseInt(tf_cashier_diskon.getText());
+            if (!(dibayarkan <= total)) {
+                total -= Integer.parseInt(tf_cashier_dibayarkan.getText());
+                lbl_cashier_kembalian.setText(convertToCurrency(total));
+            } else {
+                lbl_cashier_kembalian.setText(convertToCurrency(0));
+            }
+        } else {
+            lbl_cashier_kembalian.setText(convertToCurrency(0));
+        }
+    }//GEN-LAST:event_tf_cashier_dibayarkanKeyReleased
+
+    private void tabel_keranjangMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabel_keranjangMouseClicked
+        // Mengambil data id barang di tabel
+        int col = 0;
+        int row = tabel_keranjang.getSelectedRow();
+        int id_barang = Integer.parseInt(tabel_keranjang.getValueAt(row, col).toString());
+        System.out.println("id_barang : " + id_barang);
+//        Object[] ob = cariBarang(id_barang);
+//
+//        Barang.setId_barang(id_barang);
+//        Barang.setNama_barang(ob[1].toString());
+//        Barang.setHarga_jual(Integer.parseInt(ob[4].toString()));
+//        Barang.setHarga_pokok(Integer.parseInt(ob[3].toString()));
+//        Barang.setStok(Integer.parseInt(ob[5].toString()));
+        Object[] ob = cariTempTransaksi(id_barang);
+        Transaksi.setId_transaksi(Integer.parseInt(ob[0].toString()));
+        Transaksi.setId_barang(Integer.parseInt(ob[1].toString()));
+        Transaksi.setId_admin(Integer.parseInt(ob[2].toString()));
+        Transaksi.setQty(Integer.parseInt(ob[3].toString()));
+        Transaksi.setTanggal_pembelian(ob[4].toString());
+        new FrameTableEnteredCashierPopUp().setVisible(true);
+    }//GEN-LAST:event_tabel_keranjangMouseClicked
+    private Object[] cariTempTransaksi(int id_barang) {
+        try {
+            Object[] o = new Object[5];
+
+            // buat objek statement
+            stmt = conn.createStatement();
+
+            // buat query ke database
+            String query = "Select * from temp_transaksi where id_barang=" + id_barang;
+
+            rs = stmt.executeQuery(query);
+
+            while (rs.next()) {
+                o[0] = rs.getInt("id_temp") + "";
+                o[1] = rs.getInt("id_barang");
+                o[2] = rs.getInt("id_admin");
+                o[3] = rs.getInt("qty");
+                o[4] = rs.getInt("tanggal_pembelian");
+            }
+            return o;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private boolean filterAngka(KeyEvent evt) {
+        if (Character.isAlphabetic(evt.getKeyChar())) {
+            //JIKA KARAKTER YANG DIINPUTKAN ADALAH ALPHABET, MAKA TIDAK AKAN DIPROSES OLEH KEYLISTENER KARENA DICEGAH METHOD CONSUME
+            //DAN AKAN MENAMPILKAN PESAN JOPTIONPANE "FIELD INI HANYA MENERIMA INPUT ANGKA
+            evt.consume();
+            JOptionPane.showMessageDialog(null, "Field ini hanya menerima input Angka");
+            return false;
+        } else {
+            return true;
+        }
+    }
 
     /**
      * @param args the command line arguments
@@ -599,13 +865,13 @@ public class FrameCashier extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JLabel lbl_cashier_kembalian;
-    private javax.swing.JLabel lbl_cashier_total;
-    private javax.swing.JLabel lbl_subtotal;
+    private static javax.swing.JLabel lbl_cashier_kembalian;
+    private static javax.swing.JLabel lbl_cashier_total;
+    private static javax.swing.JLabel lbl_subtotal;
     private javax.swing.JTable tabel_barang;
-    private javax.swing.JTable tabel_beli;
+    private static javax.swing.JTable tabel_keranjang;
     private javax.swing.JTextField tf_cashier_cari;
     private javax.swing.JTextField tf_cashier_dibayarkan;
-    private javax.swing.JTextField tf_cashier_diskon;
+    private static javax.swing.JTextField tf_cashier_diskon;
     // End of variables declaration//GEN-END:variables
 }

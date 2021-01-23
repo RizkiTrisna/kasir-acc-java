@@ -5,6 +5,13 @@
  */
 package kasiracc;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author Rizki Trisna
@@ -14,8 +21,61 @@ public class FrameTableEnteredCashierPopUp extends javax.swing.JFrame {
     /**
      * Creates new form FrameTableEnteredCashierPopUp
      */
+    static Connection conn;
+    static Statement stmt;
+    static ResultSet rs;
+
     public FrameTableEnteredCashierPopUp() {
+        setUndecorated(true);
         initComponents();
+        setLocationRelativeTo(null);
+        try {
+            getKoneksi();
+        } catch (SQLException ex) {
+            Logger.getLogger(FrameTableEnteredCashierPopUp.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        setDetail();
+    }
+
+    private void getKoneksi() throws SQLException {
+        koneksi kon = new koneksi();
+        conn = kon.getConnection();
+    }
+
+    private Object[] cariDataBarang(int id_barang) {
+        try {
+            Object[] ob = new Object[5];
+
+            stmt = conn.createStatement();
+
+            String query = "Select * from barang where id_barang=" + id_barang;
+
+            rs = stmt.executeQuery(query);
+
+            while (rs.next()) {
+                ob[0] = rs.getInt("id_barang");
+                ob[1] = rs.getInt("id_jenis_barang");
+                ob[2] = rs.getString("nama_barang");
+                ob[3] = rs.getInt("harga_jual");
+                ob[4] = rs.getInt("stok_barang");
+            }
+            return ob;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private void setDetail() {
+        Object[] data_barang = cariDataBarang(Transaksi.getId_barang());
+        int subtotal = Integer.parseInt(data_barang[3].toString()) * Transaksi.getQty();
+        
+        lbl_id.setText(Transaksi.getId_barang() + "");
+        lbl_nama_barang.setText(data_barang[2].toString());
+        tf_qty.setText(Transaksi.getQty() +"");
+        lbl_harga.setText(data_barang[3].toString());
+        lbl_subtotal.setText(subtotal +"");
+
     }
 
     /**
@@ -34,19 +94,20 @@ public class FrameTableEnteredCashierPopUp extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
+        lbl_nama_barang = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
-        jLabel10 = new javax.swing.JLabel();
-        jLabel11 = new javax.swing.JLabel();
+        lbl_subtotal = new javax.swing.JLabel();
+        lbl_id = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
         jLabel15 = new javax.swing.JLabel();
-        jLabel16 = new javax.swing.JLabel();
+        lbl_harga = new javax.swing.JLabel();
         jLabel17 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jLabel18 = new javax.swing.JLabel();
-        jLabel19 = new javax.swing.JLabel();
+        tf_qty = new javax.swing.JTextField();
+        btn_ubah_data = new javax.swing.JLabel();
+        lbl_keluarkan = new javax.swing.JLabel();
+        lbl_batalkan = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -70,17 +131,17 @@ public class FrameTableEnteredCashierPopUp extends javax.swing.JFrame {
         jLabel6.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
         jLabel6.setText(":");
 
-        jLabel7.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
-        jLabel7.setText("Plastik 2kg");
+        lbl_nama_barang.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
+        lbl_nama_barang.setText("XXXXXXXX");
 
         jLabel9.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
         jLabel9.setText("Rp.");
 
-        jLabel10.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
-        jLabel10.setText("1500000");
+        lbl_subtotal.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
+        lbl_subtotal.setText("0000000");
 
-        jLabel11.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
-        jLabel11.setText("PLT01238");
+        lbl_id.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
+        lbl_id.setText("XXXXXXXX");
 
         jLabel12.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
         jLabel12.setText(":");
@@ -94,25 +155,34 @@ public class FrameTableEnteredCashierPopUp extends javax.swing.JFrame {
         jLabel15.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
         jLabel15.setText(":");
 
-        jLabel16.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
-        jLabel16.setText("75000");
+        lbl_harga.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
+        lbl_harga.setText("0");
 
         jLabel17.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
         jLabel17.setText("Rp.");
 
-        jTextField1.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        tf_qty.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
+        tf_qty.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                tf_qtyActionPerformed(evt);
             }
         });
 
-        jLabel18.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
-        jLabel18.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/btn_ubah_keranjang.png"))); // NOI18N
+        btn_ubah_data.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
+        btn_ubah_data.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/btn_ubah_keranjang.png"))); // NOI18N
 
-        jLabel19.setFont(new java.awt.Font("Assistant", 0, 26)); // NOI18N
-        jLabel19.setForeground(new java.awt.Color(168, 168, 168));
-        jLabel19.setText("Batalkan");
+        lbl_keluarkan.setFont(new java.awt.Font("Assistant", 0, 26)); // NOI18N
+        lbl_keluarkan.setForeground(new java.awt.Color(168, 168, 168));
+        lbl_keluarkan.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/btn_keluarkan_keranjang.png"))); // NOI18N
+
+        lbl_batalkan.setFont(new java.awt.Font("Assistant", 0, 26)); // NOI18N
+        lbl_batalkan.setForeground(new java.awt.Color(168, 168, 168));
+        lbl_batalkan.setText("Batalkan");
+        lbl_batalkan.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbl_batalkanMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -121,49 +191,51 @@ public class FrameTableEnteredCashierPopUp extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(66, 66, 66)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addComponent(jLabel2)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(jLabel12))
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addComponent(jLabel3)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel13))
+                        .addComponent(jLabel4)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addComponent(jLabel5)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jLabel15, javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(jLabel14, javax.swing.GroupLayout.Alignment.TRAILING))))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel18)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jLabel1)
+                        .addGap(133, 133, 133)
+                        .addComponent(jLabel6)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(lbl_nama_barang)
+                    .addComponent(lbl_id)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addComponent(jLabel2)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(jLabel12))
-                                .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addComponent(jLabel3)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel13))
-                                .addComponent(jLabel4)
-                                .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addComponent(jLabel5)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jLabel15, javax.swing.GroupLayout.Alignment.TRAILING)
-                                        .addComponent(jLabel14, javax.swing.GroupLayout.Alignment.TRAILING))))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addGap(133, 133, 133)
-                                .addComponent(jLabel6)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel9)
+                            .addComponent(jLabel17))
+                        .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel7)
-                            .addComponent(jLabel11)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel9)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel16))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel17)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel10))
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(68, 68, 68))))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(181, 181, 181)
-                .addComponent(jLabel19)
-                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(lbl_harga)
+                            .addComponent(lbl_subtotal)))
+                    .addComponent(tf_qty))
+                .addGap(57, 57, 57))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(lbl_keluarkan)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_ubah_data)
+                        .addGap(47, 47, 47))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(lbl_batalkan)
+                        .addGap(169, 169, 169))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -171,20 +243,20 @@ public class FrameTableEnteredCashierPopUp extends javax.swing.JFrame {
                 .addGap(53, 53, 53)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel11)
+                        .addComponent(lbl_id)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel7)
+                        .addComponent(lbl_nama_barang)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tf_qty, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(jLabel9)
-                                    .addComponent(jLabel16))
+                                    .addComponent(lbl_harga))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel10)
+                                    .addComponent(lbl_subtotal)
                                     .addComponent(jLabel17)))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel15)
@@ -213,11 +285,13 @@ public class FrameTableEnteredCashierPopUp extends javax.swing.JFrame {
                         .addComponent(jLabel4)
                         .addGap(11, 11, 11)
                         .addComponent(jLabel5)))
-                .addGap(48, 48, 48)
-                .addComponent(jLabel18)
+                .addGap(51, 51, 51)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(btn_ubah_data)
+                    .addComponent(lbl_keluarkan))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel19)
-                .addContainerGap(36, Short.MAX_VALUE))
+                .addComponent(lbl_batalkan)
+                .addContainerGap(25, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -228,17 +302,20 @@ public class FrameTableEnteredCashierPopUp extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void tf_qtyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tf_qtyActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+    }//GEN-LAST:event_tf_qtyActionPerformed
+
+    private void lbl_batalkanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_batalkanMouseClicked
+
+        this.dispose();
+    }//GEN-LAST:event_lbl_batalkanMouseClicked
 
     /**
      * @param args the command line arguments
@@ -276,25 +353,26 @@ public class FrameTableEnteredCashierPopUp extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel btn_ubah_data;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
-    private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
-    private javax.swing.JLabel jLabel18;
-    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JLabel lbl_batalkan;
+    private javax.swing.JLabel lbl_harga;
+    private javax.swing.JLabel lbl_id;
+    private javax.swing.JLabel lbl_keluarkan;
+    private javax.swing.JLabel lbl_nama_barang;
+    private javax.swing.JLabel lbl_subtotal;
+    private javax.swing.JTextField tf_qty;
     // End of variables declaration//GEN-END:variables
 }

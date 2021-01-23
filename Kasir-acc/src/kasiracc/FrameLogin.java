@@ -14,6 +14,7 @@ import java.sql.DriverManager;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.sql.ResultSet;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 public class FrameLogin extends javax.swing.JFrame {
@@ -49,12 +50,11 @@ public class FrameLogin extends javax.swing.JFrame {
             rs = stmt.executeQuery(query);
             
             while(rs.next()){
-                System.out.println(rs.getString("username").toString().equals(username));
-                System.out.println(rs.getString("password").toString().equals(password));
-                if(rs.getString("username").toString().equals(username) && rs.getString("password").toString().equals(password)){
-                    System.out.println("Login berhasil");
+                
+                if(rs.getString("username").toString().equals(username) && rs.getString("password").toString().equals(password) && session.setSession(rs.getInt("id_admin"))) {
+                    System.out.println("Login berhasil");  
                     return true;
-                }
+                } 
             }
             
             
@@ -67,6 +67,8 @@ public class FrameLogin extends javax.swing.JFrame {
     }
     
     public FrameLogin() {
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setUndecorated(true);
         initComponents();
     }
 
@@ -86,6 +88,7 @@ public class FrameLogin extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         tf_login_password = new javax.swing.JPasswordField();
         lbl_login_masuk = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
 
@@ -125,6 +128,13 @@ public class FrameLogin extends javax.swing.JFrame {
             }
         });
 
+        jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/exit_dark.png"))); // NOI18N
+        jLabel5.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel5MouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -144,6 +154,11 @@ public class FrameLogin extends javax.swing.JFrame {
                                 .addComponent(jLabel3)
                                 .addComponent(tf_login_password, javax.swing.GroupLayout.DEFAULT_SIZE, 492, Short.MAX_VALUE)))))
                 .addContainerGap(104, Short.MAX_VALUE))
+            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createSequentialGroup()
+                    .addGap(335, 335, 335)
+                    .addComponent(jLabel5)
+                    .addContainerGap(335, Short.MAX_VALUE)))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -161,6 +176,11 @@ public class FrameLogin extends javax.swing.JFrame {
                 .addGap(16, 16, 16)
                 .addComponent(lbl_login_masuk)
                 .addContainerGap(329, Short.MAX_VALUE))
+            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createSequentialGroup()
+                    .addGap(968, 968, 968)
+                    .addComponent(jLabel5)
+                    .addContainerGap(79, Short.MAX_VALUE)))
         );
 
         jPanel2.setBackground(new java.awt.Color(70, 87, 117));
@@ -216,7 +236,6 @@ public class FrameLogin extends javax.swing.JFrame {
         
         System.out.println("Username input" + in_username);
         System.out.println("Password input" + in_password);
-        
         if (cekLogin(in_username, in_password)){
             FrameCashier fc = new FrameCashier();
             fc.show();
@@ -226,6 +245,13 @@ public class FrameLogin extends javax.swing.JFrame {
         }
         
     }//GEN-LAST:event_lbl_login_masukMouseClicked
+
+    private void jLabel5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MouseClicked
+        if (JOptionPane.showConfirmDialog(null, "Apakah anda ingin menutup aplikasi ini?", "", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION && session.endSession()) {
+            
+            System.exit(0);
+        }
+    }//GEN-LAST:event_jLabel5MouseClicked
 
     /**
      * @param args the command line arguments
@@ -267,6 +293,7 @@ public class FrameLogin extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JLabel lbl_login_masuk;

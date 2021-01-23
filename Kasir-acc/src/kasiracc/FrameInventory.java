@@ -37,7 +37,7 @@ public class FrameInventory extends javax.swing.JFrame {
     private static DefaultTableModel tmodel;
 
     private ArrayList dataCbb = new ArrayList();
-    barang ob_barang;
+    Barang ob_barang;
 
     public FrameInventory() {
         setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -48,7 +48,7 @@ public class FrameInventory extends javax.swing.JFrame {
         } catch (SQLException ex) {
             Logger.getLogger(FrameInventory.class.getName()).log(Level.SEVERE, null, ex);
         }
-        ob_barang = new barang();
+        ob_barang = new Barang();
         prepareTable();
         tampilTabelBarang();
         tampilCombobox();
@@ -130,14 +130,12 @@ public class FrameInventory extends javax.swing.JFrame {
 
         } catch (Exception e) {
             e.printStackTrace();
-        }
-        JOptionPane.showMessageDialog(null, "Tabel inventory direfresh");
+        } 
     }
 
     public void refreshTabel() {
         prepareTable();
-        tampilTabelBarang();
-        JOptionPane.showMessageDialog(null, "Tabel inventory direfresh");
+        tampilTabelBarang(); 
     }
 
     private void tampilTabelBarang() {
@@ -725,7 +723,8 @@ public class FrameInventory extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel3MouseClicked
 
     private void jLabel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseClicked
-        if (JOptionPane.showConfirmDialog(null, "Apakah anda ingin menutup aplikasi ini?", "", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+        
+        if (JOptionPane.showConfirmDialog(null, "Apakah anda ingin menutup aplikasi ini?", "", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION && session.endSession()) {
             System.exit(0);
         }
     }//GEN-LAST:event_jLabel4MouseClicked
@@ -749,9 +748,10 @@ public class FrameInventory extends javax.swing.JFrame {
         tf_inventory_hrgPokok.setText(ob[3].toString());
         tf_inventory_stok.setText(ob[5].toString());
 
-        int indexSelectedCbb = dataCbb.indexOf(ob[2]);
-        System.out.println("index: " + indexSelectedCbb);
+        int indexSelectedCbb = dataCbb.indexOf(ob[2]); 
         cb_inventory_jenis.setSelectedIndex(indexSelectedCbb);
+        
+        
     }//GEN-LAST:event_tabel_barangMouseClicked
 
     private void lbl_inventory_perbaruiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_inventory_perbaruiMouseClicked
@@ -807,7 +807,7 @@ public class FrameInventory extends javax.swing.JFrame {
         tf_inventory_stok.setText("");
 
         // hapus data di object barang
-        ob_barang = new barang();
+        ob_barang = new Barang();
     }//GEN-LAST:event_lbl_inventory_cancelMouseClicked
     public void setKata() {
         tf_inventory_cari.setText("Cari dong");
@@ -834,7 +834,7 @@ public class FrameInventory extends javax.swing.JFrame {
         tf_inventory_hrgPokok.setText("");
         tf_inventory_stok.setText("");
 
-        ob_barang = new barang();
+        ob_barang = new Barang();
     }//GEN-LAST:event_lbl_refresh_2MouseClicked
 
     private void tf_inventory_cariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_inventory_cariKeyReleased

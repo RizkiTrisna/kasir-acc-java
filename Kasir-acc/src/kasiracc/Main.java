@@ -20,8 +20,8 @@ public class Main {
         if (con == null) {
             JOptionPane.showMessageDialog(null, "Terjadi kegagalan saat mengambil data MYSQL");
         } else {
-            FrameCashier fk = new FrameCashier();
-            fk.setVisible(true);
+            FrameLogin fl = new FrameLogin();
+            fl.setVisible(true);
         }
     }
 }

@@ -379,6 +379,10 @@ public class FramePopUpTambahBarang extends javax.swing.JFrame {
             ob[4] = stok;
             insertData(ob);
             FrameInventory.refreshTableRemote();  
+            tf_popupTambah_namaBarang.setText("");
+            tf_popupTambah_hargaJual.setText("");
+            tf_popupTambah_hargaPokok.setText("");
+            tf_popupTambah_stok.setText("");
         } else {
             JOptionPane.showMessageDialog(null, "Terdapat field yang masih kosong");
         }

@@ -5,6 +5,16 @@
  */
 package kasiracc;
 
+import java.awt.event.KeyEvent;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Rizki Trisna
@@ -14,8 +24,56 @@ public class FrameTableSearchCashierPopUp extends javax.swing.JFrame {
     /**
      * Creates new form FrameTableSearchCashierPopUp
      */
+    private int qty_barang;
+    static Connection conn;
+    static Statement stmt;
+    static ResultSet rs;
+
     public FrameTableSearchCashierPopUp() {
+        setUndecorated(true);
         initComponents();
+        setLocationRelativeTo(null);
+        try {
+            getKoneksi();
+        } catch (SQLException ex) {
+            Logger.getLogger(FrameTableSearchCashierPopUp.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        setDetail();
+
+    }
+
+    private void getKoneksi() throws SQLException {
+        koneksi kon = new koneksi();
+        conn = kon.getConnection();
+    }
+
+    private void setQty_barang(int qty) {
+        this.qty_barang = qty;
+    }
+
+    private int getQty_barang() {
+        return this.qty_barang;
+    }
+
+    private void setDetail() {
+        lbl_id.setText(Barang.getId_barang() + "");
+        lbl_nm_barang.setText(Barang.getNama_barang() + "");
+        lbl_harga.setText(Barang.getHarga_jual() + "");
+        lbl_subtotal.setText(Barang.getHarga_jual() + "");
+        lbl_id.setText(Barang.getId_barang() + "");
+        tf_qty.setText("1");
+    }
+
+    private void tambahKeranjang(int id_barang, int id_admin, int qty) {
+        try {
+            String query = "Insert into temp_transaksi(id_barang, id_admin, qty) values(" + id_barang + ", " + id_admin + ", " + qty + ")";
+            PreparedStatement pst = conn.prepareStatement(query);
+            pst.execute();
+            FrameCashier.refreshKeranjang();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Data gagal ditambahkan ke keranjang");
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -34,19 +92,19 @@ public class FrameTableSearchCashierPopUp extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
+        lbl_nm_barang = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
-        jLabel10 = new javax.swing.JLabel();
-        jLabel11 = new javax.swing.JLabel();
+        lbl_subtotal = new javax.swing.JLabel();
+        lbl_id = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
         jLabel15 = new javax.swing.JLabel();
-        jLabel16 = new javax.swing.JLabel();
+        lbl_harga = new javax.swing.JLabel();
         jLabel17 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jLabel18 = new javax.swing.JLabel();
-        jLabel19 = new javax.swing.JLabel();
+        tf_qty = new javax.swing.JTextField();
+        btn_tambah = new javax.swing.JLabel();
+        btn_batal = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -70,17 +128,17 @@ public class FrameTableSearchCashierPopUp extends javax.swing.JFrame {
         jLabel6.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
         jLabel6.setText(":");
 
-        jLabel7.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
-        jLabel7.setText("Plastik 2kg");
+        lbl_nm_barang.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
+        lbl_nm_barang.setText("Plastik 2kg");
 
         jLabel9.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
         jLabel9.setText("Rp.");
 
-        jLabel10.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
-        jLabel10.setText("1500000");
+        lbl_subtotal.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
+        lbl_subtotal.setText("1500000");
 
-        jLabel11.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
-        jLabel11.setText("PLT01238");
+        lbl_id.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
+        lbl_id.setText("PLT01238");
 
         jLabel12.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
         jLabel12.setText(":");
@@ -94,25 +152,43 @@ public class FrameTableSearchCashierPopUp extends javax.swing.JFrame {
         jLabel15.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
         jLabel15.setText(":");
 
-        jLabel16.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
-        jLabel16.setText("75000");
+        lbl_harga.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
+        lbl_harga.setText("75000");
 
         jLabel17.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
         jLabel17.setText("Rp.");
 
-        jTextField1.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        tf_qty.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
+        tf_qty.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                tf_qtyActionPerformed(evt);
+            }
+        });
+        tf_qty.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                tf_qtyKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                tf_qtyKeyTyped(evt);
             }
         });
 
-        jLabel18.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
-        jLabel18.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/btn_tambah_keranjang.png"))); // NOI18N
+        btn_tambah.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
+        btn_tambah.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/btn_tambah_keranjang.png"))); // NOI18N
+        btn_tambah.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btn_tambahMouseClicked(evt);
+            }
+        });
 
-        jLabel19.setFont(new java.awt.Font("Assistant", 0, 26)); // NOI18N
-        jLabel19.setForeground(new java.awt.Color(168, 168, 168));
-        jLabel19.setText("Batalkan");
+        btn_batal.setFont(new java.awt.Font("Assistant", 0, 26)); // NOI18N
+        btn_batal.setForeground(new java.awt.Color(168, 168, 168));
+        btn_batal.setText("Batalkan");
+        btn_batal.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btn_batalMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -122,7 +198,7 @@ public class FrameTableSearchCashierPopUp extends javax.swing.JFrame {
                 .addGap(66, 66, 66)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel18)
+                        .addComponent(btn_tambah)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -148,21 +224,21 @@ public class FrameTableSearchCashierPopUp extends javax.swing.JFrame {
                                 .addComponent(jLabel6)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 42, Short.MAX_VALUE)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel7)
-                            .addComponent(jLabel11)
+                            .addComponent(lbl_nm_barang)
+                            .addComponent(lbl_id)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel9)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel16))
+                                .addComponent(lbl_harga))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel17)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel10))
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(lbl_subtotal))
+                            .addComponent(tf_qty, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(68, 68, 68))))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(181, 181, 181)
-                .addComponent(jLabel19)
+                .addComponent(btn_batal)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -171,20 +247,20 @@ public class FrameTableSearchCashierPopUp extends javax.swing.JFrame {
                 .addGap(53, 53, 53)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel11)
+                        .addComponent(lbl_id)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel7)
+                        .addComponent(lbl_nm_barang)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(tf_qty, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(jLabel9)
-                                    .addComponent(jLabel16))
+                                    .addComponent(lbl_harga))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel10)
+                                    .addComponent(lbl_subtotal)
                                     .addComponent(jLabel17)))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel15)
@@ -214,9 +290,9 @@ public class FrameTableSearchCashierPopUp extends javax.swing.JFrame {
                         .addGap(11, 11, 11)
                         .addComponent(jLabel5)))
                 .addGap(48, 48, 48)
-                .addComponent(jLabel18)
+                .addComponent(btn_tambah)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel19)
+                .addComponent(btn_batal)
                 .addContainerGap(35, Short.MAX_VALUE))
         );
 
@@ -236,9 +312,61 @@ public class FrameTableSearchCashierPopUp extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void tf_qtyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tf_qtyActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+    }//GEN-LAST:event_tf_qtyActionPerformed
+
+    private void btn_batalMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_batalMouseClicked
+        this.dispose();
+    }//GEN-LAST:event_btn_batalMouseClicked
+
+    private void tf_qtyKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_qtyKeyReleased
+        if (tf_qty.getText().equals("") || tf_qty.getText().equals("0")) {
+            lbl_subtotal.setText(String.valueOf(Barang.getHarga_jual()));
+        } else {
+            int harga = Barang.getHarga_jual();
+            int qty = Integer.parseInt(tf_qty.getText().toString());
+            int subtotal = harga * qty;
+            lbl_subtotal.setText(subtotal + "");
+
+        }
+    }//GEN-LAST:event_tf_qtyKeyReleased
+
+    private void tf_qtyKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_qtyKeyTyped
+        // TODO add your handling code here: 
+        filterAngka(evt);
+    }//GEN-LAST:event_tf_qtyKeyTyped
+
+    private void btn_tambahMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_tambahMouseClicked
+        
+        int id_admin = session.getSession().getId_admin();
+        tambahKeranjang(Barang.getId_barang(), id_admin, Integer.parseInt(tf_qty.getText()));
+        this.dispose();
+    }//GEN-LAST:event_btn_tambahMouseClicked
+
+    private boolean filterAngka(KeyEvent evt) {
+        if (Character.isAlphabetic(evt.getKeyChar())) {
+            //JIKA KARAKTER YANG DIINPUTKAN ADALAH ALPHABET, MAKA TIDAK AKAN DIPROSES OLEH KEYLISTENER KARENA DICEGAH METHOD CONSUME
+            //DAN AKAN MENAMPILKAN PESAN JOPTIONPANE "FIELD INI HANYA MENERIMA INPUT ANGKA
+            evt.consume();
+            JOptionPane.showMessageDialog(null, "Field ini hanya menerima input Angka");
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    private boolean filterHuruf(KeyEvent evt) {
+        if (Character.isDigit(evt.getKeyChar())) {
+            //JIKA KARAKTER YANG DIINPUTKAN ADALAH NUMERIKAL, MAKA TIDAK AKAN DIPROSES OLEH KEYLISTENER KARENA DICEGAH METHOD CONSUME
+            //DAN AKAN MENAMPILKAN PESAN JOPTIONPANE "FIELD INI HANYA MENERIMA INPUT HURUF"
+            evt.consume();
+            JOptionPane.showMessageDialog(null, "Field ini hanya menerima input Huruf");
+            return false;
+        } else {
+            return true;
+        }
+    }
 
     /**
      * @param args the command line arguments
@@ -276,25 +404,25 @@ public class FrameTableSearchCashierPopUp extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel btn_batal;
+    private javax.swing.JLabel btn_tambah;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
-    private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
-    private javax.swing.JLabel jLabel18;
-    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JLabel lbl_harga;
+    private javax.swing.JLabel lbl_id;
+    private javax.swing.JLabel lbl_nm_barang;
+    private javax.swing.JLabel lbl_subtotal;
+    private javax.swing.JTextField tf_qty;
     // End of variables declaration//GEN-END:variables
 }
