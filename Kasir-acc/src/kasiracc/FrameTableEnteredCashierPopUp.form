@@ -321,6 +321,8 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="tf_qtyActionPerformed"/>
+            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="tf_qtyKeyReleased"/>
+            <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="tf_qtyKeyTyped"/>
           </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="btn_ubah_data">
@@ -332,6 +334,9 @@
               <Image iconType="3" name="/asset/btn_ubah_keranjang.png"/>
             </Property>
           </Properties>
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="btn_ubah_dataMouseClicked"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="lbl_keluarkan">
           <Properties>
@@ -345,6 +350,9 @@
               <Image iconType="3" name="/asset/btn_keluarkan_keranjang.png"/>
             </Property>
           </Properties>
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="lbl_keluarkanMouseClicked"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="lbl_batalkan">
           <Properties>

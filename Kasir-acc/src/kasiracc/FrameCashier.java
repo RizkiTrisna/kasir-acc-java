@@ -7,6 +7,7 @@ package kasiracc;
 
 import java.awt.event.KeyEvent;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -30,7 +31,7 @@ public class FrameCashier extends javax.swing.JFrame {
     static Connection conn;
     static Statement stmt;
     static ResultSet rs;
-    private DefaultTableModel tmodelBarang;
+    private static DefaultTableModel tmodelBarang;
     private static DefaultTableModel tmodelKeranjang;
 
     private static Transaksi temp_transaksi;
@@ -83,7 +84,7 @@ public class FrameCashier extends javax.swing.JFrame {
         return null;
     }
 
-    private void prepareTableBarang() {
+    private static void prepareTableBarang() {
         tmodelBarang = new DefaultTableModel();
         tabel_barang.setModel(tmodelBarang);
         tmodelBarang.addColumn("ID");
@@ -93,7 +94,7 @@ public class FrameCashier extends javax.swing.JFrame {
         tmodelBarang.addColumn("Sisa stok");
     }
 
-    public void refreshTabelBarang() {
+    public static void refreshTabelBarang() {
         prepareTableBarang();
         tampilTabelBarang();
     }
@@ -113,7 +114,37 @@ public class FrameCashier extends javax.swing.JFrame {
         tampilKeranjang();
     }
 
-    private void tampilTabelBarang() {
+    public static void refreshDetailPembayaran() {
+
+        int diskon = 0;
+        int dibayarkan = 0;
+        int subtotal = getSubtotalKeranjang();
+
+        if (!tf_cashier_diskon.getText().equals("")) {
+            diskon = Integer.parseInt(tf_cashier_diskon.getText());
+        }
+
+        if (!tf_cashier_dibayarkan.getText().equals("")) {
+            dibayarkan = Integer.parseInt(tf_cashier_dibayarkan.getText());
+        }
+
+        if (diskon <= subtotal) {
+            int total = subtotal - diskon;
+            lbl_cashier_total.setText(convertToCurrency(total));
+            if (dibayarkan > total) {
+                int kembalian = dibayarkan - total;
+                lbl_cashier_kembalian.setText(convertToCurrency(kembalian));
+            } else {
+                lbl_cashier_kembalian.setText(convertToCurrency(0));
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Diskon melebihi harga keseluruhan");
+            lbl_cashier_total.setText(convertToCurrency(0));
+        }
+
+    }
+
+    private static void tampilTabelBarang() {
         try {
 
             // buat objek statement
@@ -129,8 +160,8 @@ public class FrameCashier extends javax.swing.JFrame {
                 o[0] = rs.getInt("id_barang") + "";
                 o[1] = rs.getString("nama_barang");
                 o[2] = rs.getString("nama_jenis");
-                o[4] = rs.getInt("harga_jual");
-                o[5] = rs.getInt("stok_barang");
+                o[3] = rs.getInt("harga_jual");
+                o[4] = rs.getInt("stok_barang");
                 tmodelBarang.addRow(o);
 
             }
@@ -186,7 +217,7 @@ public class FrameCashier extends javax.swing.JFrame {
         }
     }
 
-    private int getSubtotalKeranjang() {
+    private static int getSubtotalKeranjang() {
         int all_subtotal = 0;
         try {
 
@@ -242,8 +273,8 @@ public class FrameCashier extends javax.swing.JFrame {
                 o[0] = rs.getInt("id_barang") + "";
                 o[1] = rs.getString("nama_barang");
                 o[2] = rs.getString("nama_jenis");
-                o[4] = rs.getInt("harga_jual");
-                o[5] = rs.getInt("stok_barang");
+                o[3] = rs.getInt("harga_jual");
+                o[4] = rs.getInt("stok_barang");
                 tmodelBarang.addRow(o);
 
             }
@@ -251,6 +282,26 @@ public class FrameCashier extends javax.swing.JFrame {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private boolean truncateTemp() {
+        try {
+            String query = "Truncate table temp_transaksi";
+            PreparedStatement pst = conn.prepareStatement(query);
+            pst.execute();
+            return true;
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Data gagal ditambahkan ke keranjang\n Error: " + e);
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private void resetPembayaran() {
+
+        tf_cashier_diskon.setText("");
+        tf_cashier_dibayarkan.setText("");
+        lbl_cashier_kembalian.setText(convertToCurrency(0));
     }
 
     @SuppressWarnings("unchecked")
@@ -442,7 +493,9 @@ public class FrameCashier extends javax.swing.JFrame {
         new String [] {
             "Title 1", "Title 2", "Title 3", "Title 4"
         }
-    ));
+    )
+    {public boolean isCellEditable(int row, int column){return false;}}
+    );
     tabel_keranjang.addMouseListener(new java.awt.event.MouseAdapter() {
         public void mouseClicked(java.awt.event.MouseEvent evt) {
             tabel_keranjangMouseClicked(evt);
@@ -654,9 +707,8 @@ public class FrameCashier extends javax.swing.JFrame {
     }//GEN-LAST:event_tf_cashier_cariActionPerformed
 
     private void btn_cashier_prosesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_cashier_prosesMouseClicked
-        FrameCetakStrukPopUp fc = new FrameCetakStrukPopUp();
-        fc.setVisible(true);
-        this.dispose();
+        new FrameCetakStrukPopUp().setVisible(true);
+        
     }//GEN-LAST:event_btn_cashier_prosesMouseClicked
 
     private void jLabel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseClicked
@@ -683,6 +735,7 @@ public class FrameCashier extends javax.swing.JFrame {
 
     private void btn_cashier_refreshMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_cashier_refreshMouseClicked
         refreshTabelBarang();
+        tf_cashier_cari.setText("");
     }//GEN-LAST:event_btn_cashier_refreshMouseClicked
 
     private void tf_cashier_cariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_cashier_cariKeyReleased
@@ -708,7 +761,56 @@ public class FrameCashier extends javax.swing.JFrame {
     }//GEN-LAST:event_tabel_barangMouseClicked
 
     private void btn_cashier_batalBeliMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_cashier_batalBeliMouseClicked
-//         Hapus data yang ada di tabel keranjang temporary
+        if (JOptionPane.showConfirmDialog(null, "Apakah anda ingin membatalkan transaksi ini?", "", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+
+            // Ambil semua data dari tabel temp_transaksi
+            try {
+
+                // buat objek statement
+                Statement stmt = conn.createStatement();
+
+                // buat query ke database
+                String query = "Select * from temp_transaksi";
+
+                ResultSet rs = stmt.executeQuery(query);
+
+                // Iterasi seluruh isi tabel temp_transaksi
+                while (rs.next()) {
+
+                    // Cari barang by id barang di tabel barang
+                    int id_barang = rs.getInt("id_barang");
+                    Object[] obBarang = cariBarang(id_barang);
+
+                    // Ambil stok lama
+                    int stok_lama = Integer.parseInt(obBarang[5].toString());
+
+                    // Tambahkan stok lama dengan qty dari tabel temp_transaksi by id_barang
+                    int qty_lama = rs.getInt("qty");
+                    int stok_baru = stok_lama + qty_lama;
+
+                    // Update tabel stok lama di tabel barang dengan set stok lama di set stok baru 
+                    String query_update = "update barang set stok_barang=" + stok_baru + " where id_barang=" + id_barang;
+                    PreparedStatement pst = conn.prepareStatement(query_update);
+                    pst.execute();
+
+                }
+
+                // Truncate tabel temp_transaksi
+                truncateTemp();
+
+                // Reset pembayaran
+                resetPembayaran();
+
+                // Refresh tabel keranjang dan tabel barang
+                refreshTabelBarang();
+                refreshKeranjang();
+                refreshDetailPembayaran();
+
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "Terjadi kesalahan saat membatalkan pembelian\n Error: " + e);
+                e.printStackTrace();
+            }
+        }
 
     }//GEN-LAST:event_btn_cashier_batalBeliMouseClicked
 
@@ -723,27 +825,76 @@ public class FrameCashier extends javax.swing.JFrame {
 
     private void tf_cashier_diskonKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_cashier_diskonKeyReleased
         if (!tf_cashier_diskon.getText().equals("")) {
-            int total = getSubtotalKeranjang() - Integer.parseInt(tf_cashier_diskon.getText());
+            int diskon = Integer.parseInt(tf_cashier_diskon.getText());
+            int subtotal_keranjang = getSubtotalKeranjang();
 
-            lbl_cashier_total.setText(convertToCurrency(total));
+            if (!tf_cashier_dibayarkan.getText().equals("")) {
+                // Jika kolom pembayaran sudah diisi
+                int total = subtotal_keranjang - diskon;
+                int dibayarkan = Integer.parseInt(tf_cashier_dibayarkan.getText());
+                if (dibayarkan < total) {
+                    //tampilkan 0 di kembalian
+                    lbl_cashier_kembalian.setText(convertToCurrency(0));
+
+                } else {
+                    int kembalian = total - dibayarkan;
+
+                    if (diskon > subtotal_keranjang) {
+                        JOptionPane.showMessageDialog(null, "Diskon melebihi harga keseluruhan");
+                        lbl_cashier_kembalian.setText(convertToCurrency(kembalian));
+                        lbl_cashier_total.setText(convertToCurrency(0));
+                    } else {
+                        lbl_cashier_kembalian.setText(convertToCurrency(kembalian));
+                        lbl_cashier_total.setText(convertToCurrency(total));
+                    }
+                }
+
+            } else {
+                // Jika kolom pembayaran belum diisi  
+                if (diskon > subtotal_keranjang) {
+                    JOptionPane.showMessageDialog(null, "Diskon melebihi harga keseluruhan");
+                    lbl_cashier_total.setText(convertToCurrency(0));
+                } else {
+                    int total = subtotal_keranjang - diskon;
+                    lbl_cashier_total.setText(convertToCurrency(total));
+                }
+            }
+
         } else {
             lbl_cashier_total.setText(convertToCurrency(getSubtotalKeranjang()) + "");
         }
+
     }//GEN-LAST:event_tf_cashier_diskonKeyReleased
 
     private void tf_cashier_dibayarkanKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_cashier_dibayarkanKeyReleased
+        try {
 
-        if (!tf_cashier_dibayarkan.getText().equals("")) {
-            int dibayarkan = Integer.parseInt(tf_cashier_dibayarkan.getText());
-            int total = getSubtotalKeranjang() - Integer.parseInt(tf_cashier_diskon.getText());
-            if (!(dibayarkan <= total)) {
-                total -= Integer.parseInt(tf_cashier_dibayarkan.getText());
-                lbl_cashier_kembalian.setText(convertToCurrency(total));
+            if (!tf_cashier_dibayarkan.getText().equals("")) {
+                if (!tf_cashier_diskon.getText().equals("")) {
+                    int dibayarkan = Integer.parseInt(tf_cashier_dibayarkan.getText());
+                    int total = getSubtotalKeranjang() - Integer.parseInt(tf_cashier_diskon.getText());
+                    if (!(dibayarkan <= total)) {
+                        total -= Integer.parseInt(tf_cashier_dibayarkan.getText());
+                        lbl_cashier_kembalian.setText(convertToCurrency(total));
+                    } else {
+                        lbl_cashier_kembalian.setText(convertToCurrency(0));
+                    }
+                } else {
+                    int dibayarkan = Integer.parseInt(tf_cashier_dibayarkan.getText());
+                    int total = getSubtotalKeranjang();
+                    if (!(dibayarkan <= total)) {
+                        total -= Integer.parseInt(tf_cashier_dibayarkan.getText());
+                        lbl_cashier_kembalian.setText(convertToCurrency(total));
+                    } else {
+                        lbl_cashier_kembalian.setText(convertToCurrency(0));
+                    }
+
+                }
             } else {
                 lbl_cashier_kembalian.setText(convertToCurrency(0));
             }
-        } else {
-            lbl_cashier_kembalian.setText(convertToCurrency(0));
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Terjadi kesalahan saat jumlah numerikal input di salah satu field melebihi standar.\n Error: " + e);
         }
     }//GEN-LAST:event_tf_cashier_dibayarkanKeyReleased
 
@@ -751,6 +902,8 @@ public class FrameCashier extends javax.swing.JFrame {
         // Mengambil data id barang di tabel
         int col = 0;
         int row = tabel_keranjang.getSelectedRow();
+
+        System.out.println("col: " + col + "\t row: " + row);
         int id_barang = Integer.parseInt(tabel_keranjang.getValueAt(row, col).toString());
         System.out.println("id_barang : " + id_barang);
 //        Object[] ob = cariBarang(id_barang);
@@ -868,10 +1021,10 @@ public class FrameCashier extends javax.swing.JFrame {
     private static javax.swing.JLabel lbl_cashier_kembalian;
     private static javax.swing.JLabel lbl_cashier_total;
     private static javax.swing.JLabel lbl_subtotal;
-    private javax.swing.JTable tabel_barang;
+    private static javax.swing.JTable tabel_barang;
     private static javax.swing.JTable tabel_keranjang;
     private javax.swing.JTextField tf_cashier_cari;
-    private javax.swing.JTextField tf_cashier_dibayarkan;
+    private static javax.swing.JTextField tf_cashier_dibayarkan;
     private static javax.swing.JTextField tf_cashier_diskon;
     // End of variables declaration//GEN-END:variables
 }

@@ -5,12 +5,17 @@
  */
 package kasiracc;
 
+import java.awt.event.KeyEvent;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -69,13 +74,26 @@ public class FrameTableEnteredCashierPopUp extends javax.swing.JFrame {
     private void setDetail() {
         Object[] data_barang = cariDataBarang(Transaksi.getId_barang());
         int subtotal = Integer.parseInt(data_barang[3].toString()) * Transaksi.getQty();
-        
+
         lbl_id.setText(Transaksi.getId_barang() + "");
         lbl_nama_barang.setText(data_barang[2].toString());
-        tf_qty.setText(Transaksi.getQty() +"");
+        tf_qty.setText(Transaksi.getQty() + "");
         lbl_harga.setText(data_barang[3].toString());
-        lbl_subtotal.setText(subtotal +"");
+        lbl_subtotal.setText(subtotal + "");
 
+    }
+
+    private static String convertToCurrency(double number) {
+        DecimalFormat kursIndonesia = (DecimalFormat) DecimalFormat.getCurrencyInstance();
+        DecimalFormatSymbols formatRp = new DecimalFormatSymbols();
+
+        formatRp.setCurrencySymbol("Rp. ");
+        formatRp.setMonetaryDecimalSeparator(',');
+        formatRp.setGroupingSeparator('.');
+        kursIndonesia.setDecimalFormatSymbols(formatRp);
+        String result = kursIndonesia.format(number);
+
+        return result;
     }
 
     /**
@@ -167,13 +185,31 @@ public class FrameTableEnteredCashierPopUp extends javax.swing.JFrame {
                 tf_qtyActionPerformed(evt);
             }
         });
+        tf_qty.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                tf_qtyKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                tf_qtyKeyTyped(evt);
+            }
+        });
 
         btn_ubah_data.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
         btn_ubah_data.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/btn_ubah_keranjang.png"))); // NOI18N
+        btn_ubah_data.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btn_ubah_dataMouseClicked(evt);
+            }
+        });
 
         lbl_keluarkan.setFont(new java.awt.Font("Assistant", 0, 26)); // NOI18N
         lbl_keluarkan.setForeground(new java.awt.Color(168, 168, 168));
         lbl_keluarkan.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/btn_keluarkan_keranjang.png"))); // NOI18N
+        lbl_keluarkan.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbl_keluarkanMouseClicked(evt);
+            }
+        });
 
         lbl_batalkan.setFont(new java.awt.Font("Assistant", 0, 26)); // NOI18N
         lbl_batalkan.setForeground(new java.awt.Color(168, 168, 168));
@@ -317,6 +353,136 @@ public class FrameTableEnteredCashierPopUp extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_lbl_batalkanMouseClicked
 
+    private void lbl_keluarkanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_keluarkanMouseClicked
+        // hapus data dari keranjang
+        try {
+
+            int qty_lama = Transaksi.getQty();
+            int stok_lama = Integer.parseInt(cariDataBarang(Transaksi.getId_barang())[4].toString());
+            int stok_baru = qty_lama + stok_lama;
+            int hasil = JOptionPane.showConfirmDialog(null, "Keluarkan barang ini dari keranjang?", "", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if (hasil == JOptionPane.YES_OPTION) {
+                // Hapus data barang by id di tabel temp_transaksi
+                String query = "Delete from temp_transaksi where id_barang=" + Transaksi.getId_barang();
+                PreparedStatement pst = conn.prepareStatement(query);
+                pst.execute();
+
+                // Update stok lama jadi stok baru dengan menambahkan qty yang dimasukkan ke temp_transaksi by id barang
+                query = "update barang set stok_barang=" + stok_baru + " where id_barang=" + Transaksi.getId_barang();
+                pst = conn.prepareStatement(query);
+                pst.execute();
+
+                FrameCashier.refreshKeranjang();
+                FrameCashier.refreshTabelBarang();
+                this.dispose();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        // tambahkan qty dari keranjang ke stok di inventory
+
+    }//GEN-LAST:event_lbl_keluarkanMouseClicked
+
+    private void btn_ubah_dataMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_ubah_dataMouseClicked
+        // Get qty
+        Object[] data_barang = cariDataBarang(Transaksi.getId_barang());
+        int qty_lama = Transaksi.getQty();
+        int qty_baru = Integer.parseInt(tf_qty.getText());
+        int stok_barang = Integer.parseInt(data_barang[4].toString());
+        int stok_temp = stok_barang + qty_lama;
+        //cek apakah qty melebihi stok
+        if (!tf_qty.getText().equals("")) {
+
+            if (qty_baru <= stok_temp) {
+
+                if (qty_baru != 0) {
+                    try {
+                        int stok_baru = stok_temp - qty_baru;
+                        // update qty di db temp
+                        String query = "update temp_transaksi set qty=" + qty_baru + " where id_barang=" + Transaksi.getId_barang();
+                        PreparedStatement pst = conn.prepareStatement(query);
+                        pst.execute();
+                        // update stok di db barang
+                        query = "update barang set stok_barang=" + stok_baru + " where id_barang=" + Transaksi.getId_barang();
+                        pst = conn.prepareStatement(query);
+                        pst.execute();
+                        // refresh tabel
+                        FrameCashier.refreshTabelBarang();
+                        FrameCashier.refreshKeranjang();
+                        // refresh detail pembayaran
+                        FrameCashier.refreshDetailPembayaran();
+                        this.dispose();
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(null, "Terjadi kesalahan saat update data barang\n Error: " + e);
+                    }
+
+                } else {
+                    //hapus barang dari keranjang
+                    try {
+
+                        int stok_lama = Integer.parseInt(cariDataBarang(Transaksi.getId_barang())[4].toString());
+                        int stok_baru = qty_lama + stok_lama;
+                        int hasil = JOptionPane.showConfirmDialog(null, "Keluarkan barang ini dari keranjang?", "", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                        if (hasil == JOptionPane.YES_OPTION) {
+                            // Hapus data barang by id di tabel temp_transaksi
+                            String query = "Delete from temp_transaksi where id_barang=" + Transaksi.getId_barang();
+                            PreparedStatement pst = conn.prepareStatement(query);
+                            pst.execute();
+
+                            // Update stok lama jadi stok baru dengan menambahkan qty yang dimasukkan ke temp_transaksi by id barang
+                            query = "update barang set stok_barang=" + stok_baru + " where id_barang=" + Transaksi.getId_barang();
+                            pst = conn.prepareStatement(query);
+                            pst.execute();
+
+                            FrameCashier.refreshKeranjang();
+                            FrameCashier.refreshTabelBarang();
+                            this.dispose();
+                        }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            } else {
+                JOptionPane.showMessageDialog(null, "Jumlah stok barang tidak mencukupi\n Sisa stok barang sekarang: " + stok_temp);
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Kolom jumlah barang/qty tidak boleh kosong");
+        }
+
+    }//GEN-LAST:event_btn_ubah_dataMouseClicked
+
+    private void tf_qtyKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_qtyKeyTyped
+        filterAngka(evt);
+    }//GEN-LAST:event_tf_qtyKeyTyped
+
+    private void tf_qtyKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_qtyKeyReleased
+        if (!tf_qty.getText().equals("")) {
+            int harga_barang = Integer.parseInt(cariDataBarang(Transaksi.getId_barang())[3].toString());
+            int qty = Integer.parseInt(tf_qty.getText().toString());
+            int subtotal = harga_barang * qty;
+
+            lbl_subtotal.setText(subtotal + "");
+
+        } else {
+            lbl_subtotal.setText("0");
+        }
+    }//GEN-LAST:event_tf_qtyKeyReleased
+
+    private boolean filterAngka(KeyEvent evt) {
+        if (Character.isAlphabetic(evt.getKeyChar())) {
+            //JIKA KARAKTER YANG DIINPUTKAN ADALAH ALPHABET, MAKA TIDAK AKAN DIPROSES OLEH KEYLISTENER KARENA DICEGAH METHOD CONSUME
+            //DAN AKAN MENAMPILKAN PESAN JOPTIONPANE "FIELD INI HANYA MENERIMA INPUT ANGKA
+            evt.consume();
+            JOptionPane.showMessageDialog(null, "Field ini hanya menerima input Angka");
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     /**
      * @param args the command line arguments
      */
@@ -331,16 +497,21 @@ public class FrameTableEnteredCashierPopUp extends javax.swing.JFrame {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
+
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(FrameTableEnteredCashierPopUp.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrameTableEnteredCashierPopUp.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(FrameTableEnteredCashierPopUp.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrameTableEnteredCashierPopUp.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(FrameTableEnteredCashierPopUp.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrameTableEnteredCashierPopUp.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(FrameTableEnteredCashierPopUp.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrameTableEnteredCashierPopUp.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 

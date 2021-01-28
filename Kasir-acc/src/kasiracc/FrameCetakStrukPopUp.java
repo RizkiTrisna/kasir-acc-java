@@ -5,6 +5,14 @@
  */
 package kasiracc;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFrame;
+
 /**
  *
  * @author Rizki Trisna
@@ -14,8 +22,24 @@ public class FrameCetakStrukPopUp extends javax.swing.JFrame {
     /**
      * Creates new form FrameCetakStrukPopUp
      */
+    static Connection conn;
+    static Statement stmt;
+    static ResultSet rs;
+
     public FrameCetakStrukPopUp() {
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setUndecorated(true);
         initComponents();
+        try {
+            getKoneksi();
+        } catch (SQLException ex) {
+            Logger.getLogger(FrameInventory.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void getKoneksi() throws SQLException {
+        koneksi kon = new koneksi();
+        conn = kon.getConnection();
     }
 
     /**

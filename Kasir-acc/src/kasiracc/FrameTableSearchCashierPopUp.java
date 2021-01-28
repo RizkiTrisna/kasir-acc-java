@@ -64,15 +64,104 @@ public class FrameTableSearchCashierPopUp extends javax.swing.JFrame {
         tf_qty.setText("1");
     }
 
-    private void tambahKeranjang(int id_barang, int id_admin, int qty) {
+    private int countBarangDiTemp(int id_barang) {
         try {
-            String query = "Insert into temp_transaksi(id_barang, id_admin, qty) values(" + id_barang + ", " + id_admin + ", " + qty + ")";
-            PreparedStatement pst = conn.prepareStatement(query);
-            pst.execute();
-            FrameCashier.refreshKeranjang();
+            int count = 0;
+            // buat objek statement
+            stmt = conn.createStatement();
+
+            // buat query ke database
+            String query = "Select count(*) as n_barang from temp_transaksi where id_barang=" + id_barang;
+
+            rs = stmt.executeQuery(query);
+
+            while (rs.next()) {
+                count = rs.getInt("n_barang");
+            }
+
+            return count;
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Data gagal ditambahkan ke keranjang");
             e.printStackTrace();
+        }
+
+        return 0;
+    }
+
+    private Object[] cariBarangDiTemp(int id) {
+        try {
+            Object[] o = new Object[6];
+
+            // buat objek statement
+            stmt = conn.createStatement();
+
+            // buat query ke database
+            String query = "Select * from temp_transaksi where id_barang=" + id + "";
+
+            rs = stmt.executeQuery(query);
+
+            while (rs.next()) {
+                o[0] = rs.getInt("id_temp");
+                o[1] = rs.getInt("id_barang");
+                o[2] = rs.getInt("id_admin");
+                o[3] = rs.getInt("qty");
+                o[4] = rs.getString("tanggal_pembelian");
+            }
+            return o;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private void tambahKeranjang(int id_barang, int id_admin, int qty_input) {
+        try {
+
+            //cari barang di database temp_transaksi
+            if (countBarangDiTemp(id_barang) > 0) {
+                // Update data yang sudah ada
+                Object[] data_barang = cariBarangDiTemp(id_barang);
+                int qty_lama = Integer.parseInt(data_barang[3].toString());
+                int qty_baru = qty_lama + qty_input;
+                String query = "Update temp_transaksi set qty=" + qty_baru + " Where id_barang=" + id_barang;
+                PreparedStatement pst = conn.prepareStatement(query);
+                pst.execute();
+            } else {
+                // Tambahkan data baru
+                String query = "Insert into temp_transaksi(id_barang, id_admin, qty) values(" + id_barang + ", " + id_admin + ", " + qty_input + ")";
+                PreparedStatement pst = conn.prepareStatement(query);
+                pst.execute();
+            }
+            FrameCashier.refreshTabelBarang();
+            FrameCashier.refreshKeranjang();
+            
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Data gagal ditambahkan ke keranjang\n Error: " + e);
+            e.printStackTrace();
+        }
+    }
+
+    private Object[] cariDataBarang(int id_barang) {
+        try {
+            Object[] ob = new Object[5];
+
+            stmt = conn.createStatement();
+
+            String query = "Select * from barang where id_barang=" + id_barang;
+
+            rs = stmt.executeQuery(query);
+
+            while (rs.next()) {
+                ob[0] = rs.getInt("id_barang");
+                ob[1] = rs.getInt("id_jenis_barang");
+                ob[2] = rs.getString("nama_barang");
+                ob[3] = rs.getInt("harga_jual");
+                ob[4] = rs.getInt("stok_barang");
+            }
+            return ob;
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+            e.printStackTrace();
+            return null;
         }
     }
 
@@ -129,16 +218,16 @@ public class FrameTableSearchCashierPopUp extends javax.swing.JFrame {
         jLabel6.setText(":");
 
         lbl_nm_barang.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
-        lbl_nm_barang.setText("Plastik 2kg");
+        lbl_nm_barang.setText("XXXXXXXX");
 
         jLabel9.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
         jLabel9.setText("Rp.");
 
         lbl_subtotal.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
-        lbl_subtotal.setText("1500000");
+        lbl_subtotal.setText("0000000");
 
         lbl_id.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
-        lbl_id.setText("PLT01238");
+        lbl_id.setText("XXXXXXXX");
 
         jLabel12.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
         jLabel12.setText(":");
@@ -153,7 +242,7 @@ public class FrameTableSearchCashierPopUp extends javax.swing.JFrame {
         jLabel15.setText(":");
 
         lbl_harga.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
-        lbl_harga.setText("75000");
+        lbl_harga.setText("0000000");
 
         jLabel17.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
         jLabel17.setText("Rp.");
@@ -222,8 +311,8 @@ public class FrameTableSearchCashierPopUp extends javax.swing.JFrame {
                                 .addComponent(jLabel1)
                                 .addGap(133, 133, 133)
                                 .addComponent(jLabel6)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 42, Short.MAX_VALUE)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(lbl_nm_barang)
                             .addComponent(lbl_id)
                             .addGroup(jPanel1Layout.createSequentialGroup()
@@ -234,7 +323,7 @@ public class FrameTableSearchCashierPopUp extends javax.swing.JFrame {
                                 .addComponent(jLabel17)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(lbl_subtotal))
-                            .addComponent(tf_qty, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(tf_qty))
                         .addGap(68, 68, 68))))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(181, 181, 181)
@@ -251,10 +340,10 @@ public class FrameTableSearchCashierPopUp extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(lbl_nm_barang)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tf_qty, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(tf_qty, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(jLabel9)
                                     .addComponent(lbl_harga))
@@ -338,10 +427,51 @@ public class FrameTableSearchCashierPopUp extends javax.swing.JFrame {
     }//GEN-LAST:event_tf_qtyKeyTyped
 
     private void btn_tambahMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_tambahMouseClicked
-        
+
         int id_admin = session.getSession().getId_admin();
-        tambahKeranjang(Barang.getId_barang(), id_admin, Integer.parseInt(tf_qty.getText()));
-        this.dispose();
+        int qty = Integer.parseInt(tf_qty.getText());
+        int stok_lama = Barang.getStok();
+        int stok_baru = stok_lama - qty;
+
+//        if (!tf_qty.equals("")) {
+//            try {
+//                // Update stok lama jadi stok baru dengan menambahkan qty yang dimasukkan ke temp_transaksi by id barang
+//                String query = "update barang set stok_barang=" + stok_baru + " where id_barang=" + Barang.getId_barang();
+//                PreparedStatement pst = conn.prepareStatement(query);
+//                pst.execute();
+//                tambahKeranjang(Barang.getId_barang(), id_admin, qty);
+//
+//                this.dispose();
+//            } catch (Exception e) {
+//                JOptionPane.showMessageDialog(null, "Gagal menambahkan barang ke keranjang\n Error: " + e);
+//            }
+//
+//        } else {
+//            JOptionPane.showMessageDialog(null, "Kolom jumlah barang (Qty) tidak boleh kosong");
+//        }
+        
+        //cek apakah qty melebihi stok
+        if (!tf_qty.equals("")) {
+            if (qty <= stok_lama) {
+                try {
+                    // Update stok lama jadi stok baru dengan menambahkan qty yang dimasukkan ke temp_transaksi by id barang
+                    String query = "update barang set stok_barang=" + stok_baru + " where id_barang=" + Barang.getId_barang();
+                    PreparedStatement pst = conn.prepareStatement(query);
+                    pst.execute();
+                    tambahKeranjang(Barang.getId_barang(), id_admin, qty);
+
+                    this.dispose();
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, "Gagal menambahkan barang ke keranjang\n Error: " + e);
+                }
+
+            } else {
+                JOptionPane.showMessageDialog(null, "Jumlah stok barang tidak mencukupi\n Sisa stok barang sekarang: " + stok_lama);
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Kolom jumlah barang (Qty) tidak boleh kosong");
+        }
+
     }//GEN-LAST:event_btn_tambahMouseClicked
 
     private boolean filterAngka(KeyEvent evt) {
