@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="groovy" pageWidth="226" pageHeight="431" columnWidth="186" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="134da5d0-fe75-4d48-8809-ccfb91f16bfb">
+	<property name="ireport.zoom" value="3.138428376721004"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="245"/>
+	<parameter name="total" class="java.lang.String"/>
+	<parameter name="dibayarkan" class="java.lang.String"/>
+	<parameter name="kembalian" class="java.lang.String"/>
+	<parameter name="diskon" class="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[select * from checkout]]>
+	</queryString>
+	<field name="id_temp" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="id_admin" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="nama_admin" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="id_barang" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="nama_barang" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="qty" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="harga_jual" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="subtotal" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tanggal_pembelian" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="56" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="ff8788cb-a8ae-47da-b0d0-929571a9ddcd" x="52" y="0" width="81" height="20"/>
+				<textElement>
+					<font fontName="Merchant Copy" size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ACC PRINTING]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ff8788cb-a8ae-47da-b0d0-929571a9ddcd" x="16" y="20" width="149" height="25"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Merchant Copy" size="10"/>
+				</textElement>
+				<text><![CDATA[Jl. A. Yani No.55, RT.008/RW.001, Dusun Candirejo, Ds. Awang-Awang, Kec. Mojosari, Kab. Mojokerto, Jawa Timur 61382]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="e9dc4c10-72a9-49eb-b264-ae988ce577d1" x="0" y="45" width="186" height="11"/>
+				<textElement>
+					<font fontName="Merchant Copy"/>
+				</textElement>
+				<text><![CDATA[------------------------------------------------------]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="17" splitType="Stretch">
+			<textField>
+				<reportElement uuid="7bf1c131-e0ad-44c4-9df1-92d088265d53" x="89" y="0" width="97" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Merchant Copy"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nama_admin}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="99781081-292a-47bc-9b4e-c8d38c6ee924" x="0" y="0" width="89" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Merchant Copy"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tanggal_pembelian}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="e9dc4c10-72a9-49eb-b264-ae988ce577d1" x="0" y="10" width="186" height="7"/>
+				<textElement>
+					<font fontName="Merchant Copy"/>
+				</textElement>
+				<text><![CDATA[------------------------------------------------------]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="3" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="24" splitType="Stretch">
+			<textField>
+				<reportElement uuid="20b4a196-ffe7-4862-8b06-2cea0a2427b1" x="88" y="3" width="45" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Merchant Copy"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{harga_jual}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="20b4a196-ffe7-4862-8b06-2cea0a2427b1" x="133" y="3" width="52" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Merchant Copy"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{subtotal}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="20b4a196-ffe7-4862-8b06-2cea0a2427b1" x="68" y="3" width="20" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Merchant Copy"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qty}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="20b4a196-ffe7-4862-8b06-2cea0a2427b1" x="-1" y="3" width="69" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Merchant Copy"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nama_barang}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="66" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="ff8788cb-a8ae-47da-b0d0-929571a9ddcd" x="69" y="30" width="65" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Merchant Copy" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DISKON  :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ff8788cb-a8ae-47da-b0d0-929571a9ddcd" x="69" y="42" width="65" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Merchant Copy" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TUNAI  :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ff8788cb-a8ae-47da-b0d0-929571a9ddcd" x="69" y="11" width="65" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Merchant Copy" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[HARGA TOTAL  :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="e9dc4c10-72a9-49eb-b264-ae988ce577d1" x="0" y="21" width="186" height="11"/>
+				<textElement textAlignment="Right">
+					<font fontName="Merchant Copy"/>
+				</textElement>
+				<text><![CDATA[---------------------------------]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ff8788cb-a8ae-47da-b0d0-929571a9ddcd" x="69" y="54" width="65" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Merchant Copy" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[KEMBALI  :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="e9dc4c10-72a9-49eb-b264-ae988ce577d1" x="0" y="0" width="186" height="11"/>
+				<textElement textAlignment="Right">
+					<font fontName="Merchant Copy"/>
+				</textElement>
+				<text><![CDATA[---------------------------------]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="20b4a196-ffe7-4862-8b06-2cea0a2427b1" x="133" y="11" width="52" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Merchant Copy"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{total}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="20b4a196-ffe7-4862-8b06-2cea0a2427b1" x="133" y="42" width="52" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Merchant Copy"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{dibayarkan}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="20b4a196-ffe7-4862-8b06-2cea0a2427b1" x="133" y="54" width="52" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Merchant Copy"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{kembalian}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="20b4a196-ffe7-4862-8b06-2cea0a2427b1" x="133" y="30" width="52" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Merchant Copy"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{diskon}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="30" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="ff8788cb-a8ae-47da-b0d0-929571a9ddcd" x="0" y="0" width="186" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Merchant Copy" size="10"/>
+				</textElement>
+				<text><![CDATA[TERIMAKASIH TELAH BERBELANJA DI ACC PRINTING :)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ff8788cb-a8ae-47da-b0d0-929571a9ddcd" x="0" y="14" width="186" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Merchant Copy" size="10"/>
+				</textElement>
+				<text><![CDATA[TELEPON : 0812-1774-270]]></text>
+			</staticText>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="4" splitType="Stretch"/>
+	</summary>
+</jasperReport>

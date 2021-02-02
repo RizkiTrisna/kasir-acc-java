@@ -13,11 +13,17 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.view.JasperViewer;
 
 /**
  *
@@ -36,6 +42,8 @@ public class FrameCashier extends javax.swing.JFrame {
 
     private static Transaksi temp_transaksi;
 
+    private int kembalian;
+
     public FrameCashier() {
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setUndecorated(true);
@@ -50,6 +58,28 @@ public class FrameCashier extends javax.swing.JFrame {
         tampilTabelBarang();
         tampilKeranjang();
 
+    }
+
+    private void setKembalian(int kembalian) {
+        this.kembalian = kembalian;
+    }
+
+    private int getKembalian() {
+        int total = getSumSubtotalKeranjang();
+        int diskon = 0;
+        int dibayarkan = 0;
+        int kembalian = 0;
+        System.out.println("hasil kondisi : " + (tf_cashier_diskon.equals("")));
+        if (!tf_cashier_diskon.getText().equals("")) {
+            diskon = Integer.parseInt(tf_cashier_diskon.getText());
+        }
+
+        if (!tf_cashier_dibayarkan.getText().equals("")) {
+            dibayarkan = Integer.parseInt(tf_cashier_dibayarkan.getText());
+        }
+
+        kembalian = dibayarkan - total + diskon;
+        return kembalian;
     }
 
     private void getKoneksi() throws SQLException {
@@ -118,7 +148,7 @@ public class FrameCashier extends javax.swing.JFrame {
 
         int diskon = 0;
         int dibayarkan = 0;
-        int subtotal = getSubtotalKeranjang();
+        int subtotal = getSumSubtotalKeranjang();
 
         if (!tf_cashier_diskon.getText().equals("")) {
             diskon = Integer.parseInt(tf_cashier_diskon.getText());
@@ -217,7 +247,7 @@ public class FrameCashier extends javax.swing.JFrame {
         }
     }
 
-    private static int getSubtotalKeranjang() {
+    private static int getSumSubtotalKeranjang() {
         int all_subtotal = 0;
         try {
 
@@ -315,10 +345,10 @@ public class FrameCashier extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         tf_cashier_cari = new javax.swing.JTextField();
-        btn_cashier_batalBeli = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tabel_barang = new javax.swing.JTable();
-        btn_cashier_refresh = new javax.swing.JLabel();
+        btn_batal_beli = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         tabel_keranjang = new javax.swing.JTable();
@@ -333,12 +363,12 @@ public class FrameCashier extends javax.swing.JFrame {
         jLabel15 = new javax.swing.JLabel();
         jLabel16 = new javax.swing.JLabel();
         jLabel17 = new javax.swing.JLabel();
-        btn_cashier_proses = new javax.swing.JLabel();
         lbl_cashier_total = new javax.swing.JLabel();
         lbl_subtotal = new javax.swing.JLabel();
         lbl_cashier_kembalian = new javax.swing.JLabel();
         tf_cashier_dibayarkan = new javax.swing.JTextField();
         tf_cashier_diskon = new javax.swing.JTextField();
+        btn_proses_transaksi = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -415,13 +445,6 @@ public class FrameCashier extends javax.swing.JFrame {
             }
         });
 
-        btn_cashier_batalBeli.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/btn_batal_beli.png"))); // NOI18N
-        btn_cashier_batalBeli.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btn_cashier_batalBeliMouseClicked(evt);
-            }
-        });
-
         tabel_barang.setFont(new java.awt.Font("Assistant", 0, 20)); // NOI18N
         tabel_barang.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -444,10 +467,20 @@ public class FrameCashier extends javax.swing.JFrame {
     });
     jScrollPane1.setViewportView(tabel_barang);
 
-    btn_cashier_refresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/btn_refresh.png"))); // NOI18N
-    btn_cashier_refresh.addMouseListener(new java.awt.event.MouseAdapter() {
-        public void mouseClicked(java.awt.event.MouseEvent evt) {
-            btn_cashier_refreshMouseClicked(evt);
+    btn_batal_beli.setBackground(new java.awt.Color(251, 136, 134));
+    btn_batal_beli.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
+    btn_batal_beli.setForeground(new java.awt.Color(255, 255, 255));
+    btn_batal_beli.setText("Batalkan Pembelian");
+    btn_batal_beli.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            btn_batal_beliActionPerformed(evt);
+        }
+    });
+
+    jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/icon_refresh.png"))); // NOI18N
+    jButton2.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            jButton2ActionPerformed(evt);
         }
     });
 
@@ -462,9 +495,9 @@ public class FrameCashier extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createSequentialGroup()
                     .addComponent(tf_cashier_cari, javax.swing.GroupLayout.PREFERRED_SIZE, 443, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGap(18, 18, 18)
-                    .addComponent(btn_cashier_refresh)
+                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGap(41, 41, 41)
-                    .addComponent(btn_cashier_batalBeli)))
+                    .addComponent(btn_batal_beli, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)))
             .addContainerGap(50, Short.MAX_VALUE))
     );
     jPanel2Layout.setVerticalGroup(
@@ -472,9 +505,9 @@ public class FrameCashier extends javax.swing.JFrame {
         .addGroup(jPanel2Layout.createSequentialGroup()
             .addGap(100, 100, 100)
             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(btn_cashier_batalBeli)
                 .addComponent(tf_cashier_cari, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addComponent(btn_cashier_refresh))
+                .addComponent(btn_batal_beli, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGap(55, 55, 55)
             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 777, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addContainerGap(88, Short.MAX_VALUE))
@@ -547,15 +580,6 @@ public class FrameCashier extends javax.swing.JFrame {
     jLabel17.setForeground(new java.awt.Color(112, 112, 112));
     jLabel17.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/garis_total.png"))); // NOI18N
 
-    btn_cashier_proses.setFont(new java.awt.Font("Assistant", 1, 32)); // NOI18N
-    btn_cashier_proses.setForeground(new java.awt.Color(112, 112, 112));
-    btn_cashier_proses.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/btn_proses_trans.png"))); // NOI18N
-    btn_cashier_proses.addMouseListener(new java.awt.event.MouseAdapter() {
-        public void mouseClicked(java.awt.event.MouseEvent evt) {
-            btn_cashier_prosesMouseClicked(evt);
-        }
-    });
-
     lbl_cashier_total.setFont(new java.awt.Font("Assistant", 1, 32)); // NOI18N
     lbl_cashier_total.setForeground(new java.awt.Color(112, 112, 112));
     lbl_cashier_total.setText("0");
@@ -588,6 +612,16 @@ public class FrameCashier extends javax.swing.JFrame {
         }
     });
 
+    btn_proses_transaksi.setBackground(new java.awt.Color(121, 232, 189));
+    btn_proses_transaksi.setFont(new java.awt.Font("Assistant SemiBold", 0, 42)); // NOI18N
+    btn_proses_transaksi.setForeground(new java.awt.Color(255, 255, 255));
+    btn_proses_transaksi.setText("Proses Transaksi");
+    btn_proses_transaksi.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            btn_proses_transaksiActionPerformed(evt);
+        }
+    });
+
     javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
     jPanel3.setLayout(jPanel3Layout);
     jPanel3Layout.setHorizontalGroup(
@@ -597,9 +631,6 @@ public class FrameCashier extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 773, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(289, 289, 289)
-                        .addComponent(btn_cashier_proses))
                     .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                         .addGroup(jPanel3Layout.createSequentialGroup()
                             .addComponent(jLabel11)
@@ -635,6 +666,10 @@ public class FrameCashier extends javax.swing.JFrame {
                             .addComponent(tf_cashier_dibayarkan, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE))
                         .addComponent(lbl_subtotal, javax.swing.GroupLayout.Alignment.TRAILING))))
             .addContainerGap(67, Short.MAX_VALUE))
+        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+            .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btn_proses_transaksi, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGap(260, 260, 260))
     );
     jPanel3Layout.setVerticalGroup(
         jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -676,9 +711,9 @@ public class FrameCashier extends javax.swing.JFrame {
                 .addComponent(jLabel11)
                 .addComponent(jLabel16)
                 .addComponent(lbl_cashier_kembalian))
-            .addGap(57, 57, 57)
-            .addComponent(btn_cashier_proses)
-            .addContainerGap(60, Short.MAX_VALUE))
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btn_proses_transaksi)
+            .addGap(70, 70, 70))
     );
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -706,11 +741,6 @@ public class FrameCashier extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_tf_cashier_cariActionPerformed
 
-    private void btn_cashier_prosesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_cashier_prosesMouseClicked
-        new FrameCetakStrukPopUp().setVisible(true);
-        
-    }//GEN-LAST:event_btn_cashier_prosesMouseClicked
-
     private void jLabel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseClicked
 
         if (JOptionPane.showConfirmDialog(null, "Apakah anda ingin menutup aplikasi ini?", "", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION && session.endSession()) {
@@ -732,11 +762,6 @@ public class FrameCashier extends javax.swing.JFrame {
     private void jLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseClicked
         // TODO add your handling code here:
     }//GEN-LAST:event_jLabel1MouseClicked
-
-    private void btn_cashier_refreshMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_cashier_refreshMouseClicked
-        refreshTabelBarang();
-        tf_cashier_cari.setText("");
-    }//GEN-LAST:event_btn_cashier_refreshMouseClicked
 
     private void tf_cashier_cariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_cashier_cariKeyReleased
         String indexCari = tf_cashier_cari.getText();
@@ -760,7 +785,161 @@ public class FrameCashier extends javax.swing.JFrame {
         new FrameTableSearchCashierPopUp().setVisible(true);
     }//GEN-LAST:event_tabel_barangMouseClicked
 
-    private void btn_cashier_batalBeliMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_cashier_batalBeliMouseClicked
+    private void tf_cashier_diskonKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_cashier_diskonKeyTyped
+        filterAngka(evt);
+
+    }//GEN-LAST:event_tf_cashier_diskonKeyTyped
+
+    private void tf_cashier_dibayarkanKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_cashier_dibayarkanKeyTyped
+        filterAngka(evt);
+    }//GEN-LAST:event_tf_cashier_dibayarkanKeyTyped
+
+    private void tf_cashier_diskonKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_cashier_diskonKeyReleased
+        if (!tf_cashier_diskon.getText().equals("")) {
+            int diskon = Integer.parseInt(tf_cashier_diskon.getText());
+            int subtotal_keranjang = getSumSubtotalKeranjang();
+
+            if (!tf_cashier_dibayarkan.getText().equals("")) {
+                // Jika kolom pembayaran sudah diisi
+                int total = subtotal_keranjang - diskon;
+                int dibayarkan = Integer.parseInt(tf_cashier_dibayarkan.getText());
+                if (dibayarkan < total) {
+                    //tampilkan 0 di kembalian
+                    lbl_cashier_kembalian.setText(convertToCurrency(0));
+
+                } else {
+                    int kembalian = total - dibayarkan;
+
+                    if (diskon > subtotal_keranjang) {
+                        JOptionPane.showMessageDialog(null, "Diskon melebihi harga keseluruhan");
+                        lbl_cashier_kembalian.setText(convertToCurrency(kembalian));
+                        lbl_cashier_total.setText(convertToCurrency(0));
+                    } else {
+                        lbl_cashier_kembalian.setText(convertToCurrency(kembalian));
+                        lbl_cashier_total.setText(convertToCurrency(total));
+                    }
+                }
+
+            } else {
+                // Jika kolom pembayaran belum diisi  
+                if (diskon > subtotal_keranjang) {
+                    JOptionPane.showMessageDialog(null, "Diskon melebihi harga keseluruhan");
+                    lbl_cashier_total.setText(convertToCurrency(0));
+                } else {
+                    int total = subtotal_keranjang - diskon;
+                    lbl_cashier_total.setText(convertToCurrency(total));
+                }
+            }
+
+        } else {
+            lbl_cashier_total.setText(convertToCurrency(getSumSubtotalKeranjang()) + "");
+        }
+
+    }//GEN-LAST:event_tf_cashier_diskonKeyReleased
+
+    private void tf_cashier_dibayarkanKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_cashier_dibayarkanKeyReleased
+        try {
+
+            if (!tf_cashier_dibayarkan.getText().equals("")) {
+                if (!tf_cashier_diskon.getText().equals("")) {
+                    int dibayarkan = Integer.parseInt(tf_cashier_dibayarkan.getText());
+                    int total = getSumSubtotalKeranjang() - Integer.parseInt(tf_cashier_diskon.getText());
+                    if (!(dibayarkan <= total)) {
+                        total -= Integer.parseInt(tf_cashier_dibayarkan.getText());
+                        lbl_cashier_kembalian.setText(convertToCurrency(total));
+                    } else {
+                        lbl_cashier_kembalian.setText(convertToCurrency(0));
+                    }
+                } else {
+                    int dibayarkan = Integer.parseInt(tf_cashier_dibayarkan.getText());
+                    int total = getSumSubtotalKeranjang();
+                    if (!(dibayarkan <= total)) {
+                        total -= Integer.parseInt(tf_cashier_dibayarkan.getText());
+                        lbl_cashier_kembalian.setText(convertToCurrency(total));
+                    } else {
+                        lbl_cashier_kembalian.setText(convertToCurrency(0));
+                    }
+
+                }
+            } else {
+                lbl_cashier_kembalian.setText(convertToCurrency(0));
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Terjadi kesalahan saat jumlah numerikal input di salah satu field melebihi standar.\n Error: " + e);
+        }
+    }//GEN-LAST:event_tf_cashier_dibayarkanKeyReleased
+
+    private void tabel_keranjangMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabel_keranjangMouseClicked
+        // Mengambil data id barang di tabel
+        int col = 0;
+        int row = tabel_keranjang.getSelectedRow();
+
+        System.out.println("col: " + col + "\t row: " + row);
+        int id_barang = Integer.parseInt(tabel_keranjang.getValueAt(row, col).toString());
+        System.out.println("id_barang : " + id_barang);
+//        Object[] ob = cariBarang(id_barang);
+//
+//        Barang.setId_barang(id_barang);
+//        Barang.setNama_barang(ob[1].toString());
+//        Barang.setHarga_jual(Integer.parseInt(ob[4].toString()));
+//        Barang.setHarga_pokok(Integer.parseInt(ob[3].toString()));
+//        Barang.setStok(Integer.parseInt(ob[5].toString()));
+        Object[] ob = cariTempTransaksi(id_barang);
+        Transaksi.setId_transaksi(Integer.parseInt(ob[0].toString()));
+        Transaksi.setId_barang(Integer.parseInt(ob[1].toString()));
+        Transaksi.setId_admin(Integer.parseInt(ob[2].toString()));
+        Transaksi.setQty(Integer.parseInt(ob[3].toString()));
+        Transaksi.setTanggal_pembelian(ob[4].toString());
+        new FrameTableEnteredCashierPopUp().setVisible(true);
+    }//GEN-LAST:event_tabel_keranjangMouseClicked
+
+    private void btn_proses_transaksiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_proses_transaksiActionPerformed
+        // TODO add your handling code here:
+        //        new FrameCetakStrukPopUp().setVisible(true);
+
+        try {
+            String file = "src/struk/strukbelanja.jrxml";
+            HashMap parameter = new HashMap();
+            int diskon = 0;
+            int total = getSumSubtotalKeranjang();
+            int dibayarkan = 0;
+            int kembalian = getKembalian();
+
+            if (!tf_cashier_diskon.getText().equals("")) {
+                System.out.println("diskon ada");
+                diskon = Integer.parseInt(tf_cashier_diskon.getText());
+            }
+
+            if (!tf_cashier_dibayarkan.getText().equals("")) {
+                System.out.println("dibayarkan masuk");
+                dibayarkan = Integer.parseInt(tf_cashier_dibayarkan.getText());
+
+                if ((dibayarkan - total + diskon) < 0) {
+                    // Uang tidak cukup
+                    JOptionPane.showMessageDialog(null, "Jumlah tunai kurang dari total keseluruhan belanja.");
+                } else {
+                    // Uang cukup
+
+                    parameter.put("total", total + "");
+                    parameter.put("diskon", diskon + "");
+                    parameter.put("dibayarkan", dibayarkan + "");
+                    parameter.put("kembalian", kembalian + "");
+
+                    JasperReport jasperReport = JasperCompileManager.compileReport(file);
+                    JasperPrint print = JasperFillManager.fillReport(jasperReport, parameter, conn);
+                    JasperViewer.viewReport(print, false);
+
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Nominal pembayaran belum diisi");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Terjadi kesalahan saat memproses pembelian.\n Error: " + e);
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_btn_proses_transaksiActionPerformed
+
+    private void btn_batal_beliActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_batal_beliActionPerformed
         if (JOptionPane.showConfirmDialog(null, "Apakah anda ingin membatalkan transaksi ini?", "", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 
             // Ambil semua data dari tabel temp_transaksi
@@ -812,115 +991,13 @@ public class FrameCashier extends javax.swing.JFrame {
             }
         }
 
-    }//GEN-LAST:event_btn_cashier_batalBeliMouseClicked
+    }//GEN-LAST:event_btn_batal_beliActionPerformed
 
-    private void tf_cashier_diskonKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_cashier_diskonKeyTyped
-        filterAngka(evt);
-
-    }//GEN-LAST:event_tf_cashier_diskonKeyTyped
-
-    private void tf_cashier_dibayarkanKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_cashier_dibayarkanKeyTyped
-        filterAngka(evt);
-    }//GEN-LAST:event_tf_cashier_dibayarkanKeyTyped
-
-    private void tf_cashier_diskonKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_cashier_diskonKeyReleased
-        if (!tf_cashier_diskon.getText().equals("")) {
-            int diskon = Integer.parseInt(tf_cashier_diskon.getText());
-            int subtotal_keranjang = getSubtotalKeranjang();
-
-            if (!tf_cashier_dibayarkan.getText().equals("")) {
-                // Jika kolom pembayaran sudah diisi
-                int total = subtotal_keranjang - diskon;
-                int dibayarkan = Integer.parseInt(tf_cashier_dibayarkan.getText());
-                if (dibayarkan < total) {
-                    //tampilkan 0 di kembalian
-                    lbl_cashier_kembalian.setText(convertToCurrency(0));
-
-                } else {
-                    int kembalian = total - dibayarkan;
-
-                    if (diskon > subtotal_keranjang) {
-                        JOptionPane.showMessageDialog(null, "Diskon melebihi harga keseluruhan");
-                        lbl_cashier_kembalian.setText(convertToCurrency(kembalian));
-                        lbl_cashier_total.setText(convertToCurrency(0));
-                    } else {
-                        lbl_cashier_kembalian.setText(convertToCurrency(kembalian));
-                        lbl_cashier_total.setText(convertToCurrency(total));
-                    }
-                }
-
-            } else {
-                // Jika kolom pembayaran belum diisi  
-                if (diskon > subtotal_keranjang) {
-                    JOptionPane.showMessageDialog(null, "Diskon melebihi harga keseluruhan");
-                    lbl_cashier_total.setText(convertToCurrency(0));
-                } else {
-                    int total = subtotal_keranjang - diskon;
-                    lbl_cashier_total.setText(convertToCurrency(total));
-                }
-            }
-
-        } else {
-            lbl_cashier_total.setText(convertToCurrency(getSubtotalKeranjang()) + "");
-        }
-
-    }//GEN-LAST:event_tf_cashier_diskonKeyReleased
-
-    private void tf_cashier_dibayarkanKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_cashier_dibayarkanKeyReleased
-        try {
-
-            if (!tf_cashier_dibayarkan.getText().equals("")) {
-                if (!tf_cashier_diskon.getText().equals("")) {
-                    int dibayarkan = Integer.parseInt(tf_cashier_dibayarkan.getText());
-                    int total = getSubtotalKeranjang() - Integer.parseInt(tf_cashier_diskon.getText());
-                    if (!(dibayarkan <= total)) {
-                        total -= Integer.parseInt(tf_cashier_dibayarkan.getText());
-                        lbl_cashier_kembalian.setText(convertToCurrency(total));
-                    } else {
-                        lbl_cashier_kembalian.setText(convertToCurrency(0));
-                    }
-                } else {
-                    int dibayarkan = Integer.parseInt(tf_cashier_dibayarkan.getText());
-                    int total = getSubtotalKeranjang();
-                    if (!(dibayarkan <= total)) {
-                        total -= Integer.parseInt(tf_cashier_dibayarkan.getText());
-                        lbl_cashier_kembalian.setText(convertToCurrency(total));
-                    } else {
-                        lbl_cashier_kembalian.setText(convertToCurrency(0));
-                    }
-
-                }
-            } else {
-                lbl_cashier_kembalian.setText(convertToCurrency(0));
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Terjadi kesalahan saat jumlah numerikal input di salah satu field melebihi standar.\n Error: " + e);
-        }
-    }//GEN-LAST:event_tf_cashier_dibayarkanKeyReleased
-
-    private void tabel_keranjangMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabel_keranjangMouseClicked
-        // Mengambil data id barang di tabel
-        int col = 0;
-        int row = tabel_keranjang.getSelectedRow();
-
-        System.out.println("col: " + col + "\t row: " + row);
-        int id_barang = Integer.parseInt(tabel_keranjang.getValueAt(row, col).toString());
-        System.out.println("id_barang : " + id_barang);
-//        Object[] ob = cariBarang(id_barang);
-//
-//        Barang.setId_barang(id_barang);
-//        Barang.setNama_barang(ob[1].toString());
-//        Barang.setHarga_jual(Integer.parseInt(ob[4].toString()));
-//        Barang.setHarga_pokok(Integer.parseInt(ob[3].toString()));
-//        Barang.setStok(Integer.parseInt(ob[5].toString()));
-        Object[] ob = cariTempTransaksi(id_barang);
-        Transaksi.setId_transaksi(Integer.parseInt(ob[0].toString()));
-        Transaksi.setId_barang(Integer.parseInt(ob[1].toString()));
-        Transaksi.setId_admin(Integer.parseInt(ob[2].toString()));
-        Transaksi.setQty(Integer.parseInt(ob[3].toString()));
-        Transaksi.setTanggal_pembelian(ob[4].toString());
-        new FrameTableEnteredCashierPopUp().setVisible(true);
-    }//GEN-LAST:event_tabel_keranjangMouseClicked
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        refreshTabelBarang();
+        tf_cashier_cari.setText("");
+    }//GEN-LAST:event_jButton2ActionPerformed
     private Object[] cariTempTransaksi(int id_barang) {
         try {
             Object[] o = new Object[5];
@@ -995,9 +1072,9 @@ public class FrameCashier extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel btn_cashier_batalBeli;
-    private javax.swing.JLabel btn_cashier_proses;
-    private javax.swing.JLabel btn_cashier_refresh;
+    private javax.swing.JButton btn_batal_beli;
+    private javax.swing.JButton btn_proses_transaksi;
+    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;

@@ -297,8 +297,8 @@ public class FrameInventory extends javax.swing.JFrame {
         tf_inventory_cari = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         tabel_barang = new javax.swing.JTable();
-        lbl_inventory_refresh = new javax.swing.JLabel();
-        lbl_inventory_tambahBarang = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
@@ -316,12 +316,12 @@ public class FrameInventory extends javax.swing.JFrame {
         tf_inventory_nmBarang = new javax.swing.JTextField();
         tf_inventory_hrgJual = new javax.swing.JTextField();
         tf_inventory_stok = new javax.swing.JTextField();
-        lbl_inventory_cancel = new javax.swing.JLabel();
-        lbl_inventory_perbarui = new javax.swing.JLabel();
         jLabel18 = new javax.swing.JLabel();
         jLabel19 = new javax.swing.JLabel();
         cb_inventory_jenis = new javax.swing.JComboBox();
-        lbl_refresh_2 = new javax.swing.JLabel();
+        jButton3 = new javax.swing.JButton();
+        btn_hapus_data = new javax.swing.JButton();
+        btn_perbarui_data = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -414,18 +414,21 @@ public class FrameInventory extends javax.swing.JFrame {
     });
     jScrollPane1.setViewportView(tabel_barang);
 
-    lbl_inventory_refresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/btn_refresh.png"))); // NOI18N
-    lbl_inventory_refresh.addMouseListener(new java.awt.event.MouseAdapter() {
-        public void mouseClicked(java.awt.event.MouseEvent evt) {
-            lbl_inventory_refreshMouseClicked(evt);
+    jButton1.setBackground(new java.awt.Color(253, 208, 149));
+    jButton1.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
+    jButton1.setForeground(new java.awt.Color(255, 255, 255));
+    jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/icon_tambah.png"))); // NOI18N
+    jButton1.setText("Tambah Barang");
+    jButton1.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            jButton1ActionPerformed(evt);
         }
     });
 
-    lbl_inventory_tambahBarang.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/btn_tambah_baru.png"))); // NOI18N
-    lbl_inventory_tambahBarang.setToolTipText("");
-    lbl_inventory_tambahBarang.addMouseListener(new java.awt.event.MouseAdapter() {
-        public void mouseClicked(java.awt.event.MouseEvent evt) {
-            lbl_inventory_tambahBarangMouseClicked(evt);
+    jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/icon_refresh.png"))); // NOI18N
+    jButton2.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            jButton2ActionPerformed(evt);
         }
     });
 
@@ -437,22 +440,22 @@ public class FrameInventory extends javax.swing.JFrame {
             .addGap(57, 57, 57)
             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 987, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                     .addComponent(tf_inventory_cari, javax.swing.GroupLayout.PREFERRED_SIZE, 515, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(29, 29, 29)
-                    .addComponent(lbl_inventory_refresh)
+                    .addGap(33, 33, 33)
+                    .addComponent(jButton2)
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lbl_inventory_tambahBarang)))
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)))
             .addContainerGap(45, Short.MAX_VALUE))
     );
     jPanel2Layout.setVerticalGroup(
         jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
         .addGroup(jPanel2Layout.createSequentialGroup()
             .addGap(100, 100, 100)
-            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(tf_inventory_cari, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addComponent(lbl_inventory_refresh)
-                .addComponent(lbl_inventory_tambahBarang))
+            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addComponent(tf_inventory_cari, javax.swing.GroupLayout.DEFAULT_SIZE, 60, Short.MAX_VALUE)
+                .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGap(55, 55, 55)
             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 777, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -526,24 +529,6 @@ public class FrameInventory extends javax.swing.JFrame {
 
     tf_inventory_stok.setFont(new java.awt.Font("Assistant SemiBold", 0, 32)); // NOI18N
 
-    lbl_inventory_cancel.setFont(new java.awt.Font("Assistant", 1, 32)); // NOI18N
-    lbl_inventory_cancel.setForeground(new java.awt.Color(112, 112, 112));
-    lbl_inventory_cancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/btn_hapus_data.png"))); // NOI18N
-    lbl_inventory_cancel.addMouseListener(new java.awt.event.MouseAdapter() {
-        public void mouseClicked(java.awt.event.MouseEvent evt) {
-            lbl_inventory_cancelMouseClicked(evt);
-        }
-    });
-
-    lbl_inventory_perbarui.setFont(new java.awt.Font("Assistant", 1, 32)); // NOI18N
-    lbl_inventory_perbarui.setForeground(new java.awt.Color(112, 112, 112));
-    lbl_inventory_perbarui.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/btn_perbarui_data.png"))); // NOI18N
-    lbl_inventory_perbarui.addMouseListener(new java.awt.event.MouseAdapter() {
-        public void mouseClicked(java.awt.event.MouseEvent evt) {
-            lbl_inventory_perbaruiMouseClicked(evt);
-        }
-    });
-
     jLabel18.setFont(new java.awt.Font("Assistant", 1, 32)); // NOI18N
     jLabel18.setForeground(new java.awt.Color(112, 112, 112));
     jLabel18.setText("Rp.");
@@ -561,13 +546,30 @@ public class FrameInventory extends javax.swing.JFrame {
         }
     });
 
-    lbl_refresh_2.setFont(new java.awt.Font("Assistant", 1, 32)); // NOI18N
-    lbl_refresh_2.setForeground(new java.awt.Color(112, 112, 112));
-    lbl_refresh_2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/btn_refresh.png"))); // NOI18N
-    lbl_refresh_2.setToolTipText("");
-    lbl_refresh_2.addMouseListener(new java.awt.event.MouseAdapter() {
-        public void mouseClicked(java.awt.event.MouseEvent evt) {
-            lbl_refresh_2MouseClicked(evt);
+    jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/icon_refresh.png"))); // NOI18N
+    jButton3.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            jButton3ActionPerformed(evt);
+        }
+    });
+
+    btn_hapus_data.setBackground(new java.awt.Color(251, 136, 134));
+    btn_hapus_data.setFont(new java.awt.Font("Assistant SemiBold", 0, 42)); // NOI18N
+    btn_hapus_data.setForeground(new java.awt.Color(255, 255, 255));
+    btn_hapus_data.setText("Hapus Data");
+    btn_hapus_data.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            btn_hapus_dataActionPerformed(evt);
+        }
+    });
+
+    btn_perbarui_data.setBackground(new java.awt.Color(121, 232, 189));
+    btn_perbarui_data.setFont(new java.awt.Font("Assistant SemiBold", 0, 42)); // NOI18N
+    btn_perbarui_data.setForeground(new java.awt.Color(255, 255, 255));
+    btn_perbarui_data.setText("Perbarui Data");
+    btn_perbarui_data.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            btn_perbarui_dataActionPerformed(evt);
         }
     });
 
@@ -598,14 +600,14 @@ public class FrameInventory extends javax.swing.JFrame {
                             .addComponent(jLabel14)))
                     .addGap(179, 430, Short.MAX_VALUE))
                 .addGroup(jPanel3Layout.createSequentialGroup()
-                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addGap(363, 363, 363)
                                 .addComponent(cb_inventory_jenis, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                 .addGroup(jPanel3Layout.createSequentialGroup()
-                                    .addComponent(lbl_refresh_2)
+                                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(jLabel11)
                                     .addGap(216, 216, 216))
@@ -628,9 +630,9 @@ public class FrameInventory extends javax.swing.JFrame {
                                     .addComponent(tf_inventory_stok, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(tf_inventory_hrgJual, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE))))
                         .addGroup(jPanel3Layout.createSequentialGroup()
-                            .addComponent(lbl_inventory_cancel)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lbl_inventory_perbarui)))
+                            .addComponent(btn_hapus_data, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(70, 70, 70)
+                            .addComponent(btn_perbarui_data, javax.swing.GroupLayout.PREFERRED_SIZE, 283, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGap(0, 0, Short.MAX_VALUE))))
     );
     jPanel3Layout.setVerticalGroup(
@@ -638,8 +640,8 @@ public class FrameInventory extends javax.swing.JFrame {
         .addGroup(jPanel3Layout.createSequentialGroup()
             .addGap(293, 293, 293)
             .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                .addComponent(lbl_refresh_2)
-                .addComponent(jLabel11))
+                .addComponent(jLabel11)
+                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
             .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGap(18, 18, 18)
@@ -679,9 +681,9 @@ public class FrameInventory extends javax.swing.JFrame {
                     .addGap(18, 18, 18)
                     .addComponent(tf_inventory_stok, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
             .addGap(165, 165, 165)
-            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                .addComponent(lbl_inventory_cancel)
-                .addComponent(lbl_inventory_perbarui))
+            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addComponent(btn_hapus_data, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btn_perbarui_data, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGap(97, 97, 97))
     );
 
@@ -753,89 +755,12 @@ public class FrameInventory extends javax.swing.JFrame {
         
         
     }//GEN-LAST:event_tabel_barangMouseClicked
-
-    private void lbl_inventory_perbaruiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_inventory_perbaruiMouseClicked
-
-        int hasil = JOptionPane.showConfirmDialog(null, "Simpan perubahan barang ini?", "", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-        if (hasil == JOptionPane.YES_OPTION && (!tf_inventory_nmBarang.getText().equals("") && !tf_inventory_hrgJual.getText().equals("") && !tf_inventory_hrgPokok.getText().equals("") && !tf_inventory_stok.getText().equals("")) && ob_barang.getId_barang() != 0) {
-            String nama_barang = tf_inventory_nmBarang.getText();
-            int harga_pokok = Integer.parseInt(tf_inventory_hrgPokok.getText().toString());
-            int harga_jual = Integer.parseInt(tf_inventory_hrgJual.getText().toString());
-            int stok = Integer.parseInt(tf_inventory_stok.getText().toString());
-            int id_jenis = Integer.parseInt(cb_inventory_jenis.getSelectedItem().toString().split(" - ")[0]);
-            int id_barang = ob_barang.getId_barang();
-
-            Object[] ob = new Object[5];
-            ob[0] = id_jenis;
-            ob[1] = nama_barang;
-            ob[2] = harga_jual;
-            ob[3] = harga_pokok;
-            ob[4] = stok;
-            updateData(id_barang, ob);
-
-            // set textfield null
-            tf_inventory_nmBarang.setText("");
-            tf_inventory_hrgJual.setText("");
-            tf_inventory_hrgPokok.setText("");
-            tf_inventory_stok.setText("");
-            ob_barang = null;
-        } else {
-            JOptionPane.showMessageDialog(null, "Terdapat field yang masih kosong atau data tidak diambil dari tabel dengan benar");
-        }
-    }//GEN-LAST:event_lbl_inventory_perbaruiMouseClicked
-
-    private void lbl_inventory_cancelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_inventory_cancelMouseClicked
-
-        // Mengambil data id barang di tabel
-        int col = 0;
-        int row = tabel_barang.getSelectedRow();
-        int id_barang = Integer.parseInt(tabel_barang.getValueAt(row, col).toString());
-
-        // hapus data 
-        int hasil = JOptionPane.showConfirmDialog(null, "Hapus data barang ini?", "", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-        if (hasil == JOptionPane.YES_OPTION && (!tf_inventory_nmBarang.getText().equals("") && !tf_inventory_hrgJual.getText().equals("") && !tf_inventory_hrgPokok.getText().equals("") && !tf_inventory_stok.getText().equals(""))) {
-            hapusData(id_barang);
-            refreshTabel();
-        } else {
-            JOptionPane.showMessageDialog(null, "Data tidak diambil dari tabel dengan benar");
-        }
-
-        // set textfield null
-        tf_inventory_nmBarang.setText("");
-        tf_inventory_hrgJual.setText("");
-        tf_inventory_hrgPokok.setText("");
-        tf_inventory_stok.setText("");
-
-        // hapus data di object barang
-        ob_barang = new Barang();
-    }//GEN-LAST:event_lbl_inventory_cancelMouseClicked
     public void setKata() {
         tf_inventory_cari.setText("Cari dong");
     }
     private void cb_inventory_jenisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cb_inventory_jenisActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_cb_inventory_jenisActionPerformed
-
-    private void lbl_inventory_refreshMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_inventory_refreshMouseClicked
-        refreshTabel();
-        tf_inventory_cari.setText("");
-    }//GEN-LAST:event_lbl_inventory_refreshMouseClicked
-
-    private void lbl_inventory_tambahBarangMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_inventory_tambahBarangMouseClicked
-        new FramePopUpTambahBarang().setVisible(true);
-
-    }//GEN-LAST:event_lbl_inventory_tambahBarangMouseClicked
-
-    private void lbl_refresh_2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_refresh_2MouseClicked
-
-        // set textfield null
-        tf_inventory_nmBarang.setText("");
-        tf_inventory_hrgJual.setText("");
-        tf_inventory_hrgPokok.setText("");
-        tf_inventory_stok.setText("");
-
-        ob_barang = new Barang();
-    }//GEN-LAST:event_lbl_refresh_2MouseClicked
 
     private void tf_inventory_cariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_inventory_cariKeyReleased
         String indexCari = tf_inventory_cari.getText();
@@ -864,6 +789,82 @@ public class FrameInventory extends javax.swing.JFrame {
 //            evt.consume();
 //        }
     }//GEN-LAST:event_tf_inventory_hrgPokokKeyTyped
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        new FramePopUpTambahBarang().setVisible(true);
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        refreshTabel();
+        tf_inventory_cari.setText("");
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // set textfield null
+        tf_inventory_nmBarang.setText("");
+        tf_inventory_hrgJual.setText("");
+        tf_inventory_hrgPokok.setText("");
+        tf_inventory_stok.setText("");
+
+        ob_barang = new Barang();
+
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void btn_perbarui_dataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_perbarui_dataActionPerformed
+
+        int hasil = JOptionPane.showConfirmDialog(null, "Simpan perubahan barang ini?", "", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (hasil == JOptionPane.YES_OPTION && (!tf_inventory_nmBarang.getText().equals("") && !tf_inventory_hrgJual.getText().equals("") && !tf_inventory_hrgPokok.getText().equals("") && !tf_inventory_stok.getText().equals("")) && ob_barang.getId_barang() != 0) {
+            String nama_barang = tf_inventory_nmBarang.getText();
+            int harga_pokok = Integer.parseInt(tf_inventory_hrgPokok.getText().toString());
+            int harga_jual = Integer.parseInt(tf_inventory_hrgJual.getText().toString());
+            int stok = Integer.parseInt(tf_inventory_stok.getText().toString());
+            int id_jenis = Integer.parseInt(cb_inventory_jenis.getSelectedItem().toString().split(" - ")[0]);
+            int id_barang = ob_barang.getId_barang();
+
+            Object[] ob = new Object[5];
+            ob[0] = id_jenis;
+            ob[1] = nama_barang;
+            ob[2] = harga_jual;
+            ob[3] = harga_pokok;
+            ob[4] = stok;
+            updateData(id_barang, ob);
+
+            // set textfield null
+            tf_inventory_nmBarang.setText("");
+            tf_inventory_hrgJual.setText("");
+            tf_inventory_hrgPokok.setText("");
+            tf_inventory_stok.setText("");
+            ob_barang = null;
+        } else {
+            JOptionPane.showMessageDialog(null, "Terdapat field yang masih kosong atau data tidak diambil dari tabel dengan benar");
+        }
+    }//GEN-LAST:event_btn_perbarui_dataActionPerformed
+
+    private void btn_hapus_dataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_hapus_dataActionPerformed
+
+        // Mengambil data id barang di tabel
+        int col = 0;
+        int row = tabel_barang.getSelectedRow();
+        int id_barang = Integer.parseInt(tabel_barang.getValueAt(row, col).toString());
+
+        // hapus data 
+        int hasil = JOptionPane.showConfirmDialog(null, "Hapus data barang ini?", "", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (hasil == JOptionPane.YES_OPTION && (!tf_inventory_nmBarang.getText().equals("") && !tf_inventory_hrgJual.getText().equals("") && !tf_inventory_hrgPokok.getText().equals("") && !tf_inventory_stok.getText().equals(""))) {
+            hapusData(id_barang);
+            refreshTabel();
+        } else {
+            JOptionPane.showMessageDialog(null, "Data tidak diambil dari tabel dengan benar");
+        }
+
+        // set textfield null
+        tf_inventory_nmBarang.setText("");
+        tf_inventory_hrgJual.setText("");
+        tf_inventory_hrgPokok.setText("");
+        tf_inventory_stok.setText("");
+
+        // hapus data di object barang
+        ob_barang = new Barang();
+    }//GEN-LAST:event_btn_hapus_dataActionPerformed
 
     /**
      * @param args the command line arguments
@@ -901,7 +902,12 @@ public class FrameInventory extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btn_hapus_data;
+    private javax.swing.JButton btn_perbarui_data;
     private javax.swing.JComboBox cb_inventory_jenis;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -924,11 +930,6 @@ public class FrameInventory extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JLabel lbl_inventory_cancel;
-    private javax.swing.JLabel lbl_inventory_perbarui;
-    private javax.swing.JLabel lbl_inventory_refresh;
-    private javax.swing.JLabel lbl_inventory_tambahBarang;
-    private javax.swing.JLabel lbl_refresh_2;
     private static javax.swing.JTable tabel_barang;
     private javax.swing.JTextField tf_inventory_cari;
     private javax.swing.JTextField tf_inventory_hrgJual;

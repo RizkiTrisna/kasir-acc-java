@@ -2,7 +2,11 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="226" pageHeight="431" columnWidth="186" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="2014db23-c93d-4c89-92c4-64be792e37b9">
 	<property name="ireport.zoom" value="2.3579476910000046"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="96"/>
+	<property name="ireport.y" value="191"/>
+	<parameter name="diskon" class="java.lang.String"/>
+	<parameter name="dibayarkan" class="java.lang.String"/>
+	<parameter name="dibayarkan" class="java.lang.String"/>
+	<parameter name="kembalian" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -38,14 +42,14 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Merchant Copy"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{field}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{tanggal_transaksi}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement uuid="7bf1c131-e0ad-44c4-9df1-92d088265d53" x="89" y="0" width="97" height="10"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Merchant Copy"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{field}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{nama_admin}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement uuid="e9dc4c10-72a9-49eb-b264-ae988ce577d1" x="0" y="10" width="186" height="7"/>
@@ -66,36 +70,36 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Merchant Copy"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{field}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{nama_barang}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement uuid="20b4a196-ffe7-4862-8b06-2cea0a2427b1" x="69" y="0" width="20" height="20"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Merchant Copy"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{field}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{qty}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement uuid="20b4a196-ffe7-4862-8b06-2cea0a2427b1" x="89" y="0" width="45" height="20"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Merchant Copy"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{field}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{harga_jual}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement uuid="20b4a196-ffe7-4862-8b06-2cea0a2427b1" x="134" y="0" width="52" height="20"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Merchant Copy"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{field}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{subtotal}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
 	<columnFooter>
-		<band height="66" splitType="Stretch">
+		<band height="69" splitType="Stretch">
 			<staticText>
 				<reportElement uuid="ff8788cb-a8ae-47da-b0d0-929571a9ddcd" x="69" y="11" width="65" height="10"/>
-				<textElement textAlignment="Right">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Merchant Copy" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[HARGA TOTAL  :]]></text>
@@ -119,32 +123,32 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Merchant Copy"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{field}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{total}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement uuid="ff8788cb-a8ae-47da-b0d0-929571a9ddcd" x="69" y="30" width="65" height="10"/>
-				<textElement textAlignment="Right">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Merchant Copy" size="10" isBold="true"/>
 				</textElement>
-				<text><![CDATA[TOTAL  :]]></text>
+				<text><![CDATA[DISKON  :]]></text>
 			</staticText>
 			<textField>
 				<reportElement uuid="20b4a196-ffe7-4862-8b06-2cea0a2427b1" x="134" y="30" width="52" height="10"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Merchant Copy"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{field}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{diskon}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement uuid="ff8788cb-a8ae-47da-b0d0-929571a9ddcd" x="69" y="42" width="65" height="10"/>
-				<textElement textAlignment="Right">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Merchant Copy" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[TUNAI  :]]></text>
 			</staticText>
 			<staticText>
 				<reportElement uuid="ff8788cb-a8ae-47da-b0d0-929571a9ddcd" x="69" y="55" width="65" height="10"/>
-				<textElement textAlignment="Right">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Merchant Copy" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[KEMBALI  :]]></text>
@@ -154,14 +158,14 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Merchant Copy"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{field}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{dibayarkan}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement uuid="20b4a196-ffe7-4862-8b06-2cea0a2427b1" x="134" y="54" width="52" height="10"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Merchant Copy"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{field}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{kembalian}]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnFooter>
@@ -172,7 +176,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Merchant Copy" size="10"/>
 				</textElement>
-				<text><![CDATA[TERIMAKASIH TELAH BERBELANJA DI ACC PRINTING:)]]></text>
+				<text><![CDATA[TERIMAKASIH TELAH BERBELANJA DI ACC PRINTING :)]]></text>
 			</staticText>
 			<staticText>
 				<reportElement uuid="ff8788cb-a8ae-47da-b0d0-929571a9ddcd" x="0" y="14" width="186" height="14"/>

@@ -119,12 +119,12 @@ public class FramePopUpTambahBarang extends javax.swing.JFrame {
         jLabel8 = new javax.swing.JLabel();
         tf_popupTambah_namaBarang = new javax.swing.JTextField();
         jLabel21 = new javax.swing.JLabel();
-        btn_popupTambah_tambah = new javax.swing.JLabel();
         tf_popupTambah_hargaJual = new javax.swing.JTextField();
         tf_popupTambah_hargaPokok = new javax.swing.JTextField();
         tf_popupTambah_stok = new javax.swing.JTextField();
         jLabel16 = new javax.swing.JLabel();
         cb_popupTambah_jenis_barang = new javax.swing.JComboBox();
+        btn_tambah_barang = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -185,13 +185,6 @@ public class FramePopUpTambahBarang extends javax.swing.JFrame {
         jLabel21.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
         jLabel21.setText("Rp.");
 
-        btn_popupTambah_tambah.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/btn_tambah_barang.png"))); // NOI18N
-        btn_popupTambah_tambah.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btn_popupTambah_tambahMouseClicked(evt);
-            }
-        });
-
         tf_popupTambah_hargaJual.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
         tf_popupTambah_hargaJual.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -221,6 +214,16 @@ public class FramePopUpTambahBarang extends javax.swing.JFrame {
         cb_popupTambah_jenis_barang.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cb_popupTambah_jenis_barangActionPerformed(evt);
+            }
+        });
+
+        btn_tambah_barang.setBackground(new java.awt.Color(26, 115, 232));
+        btn_tambah_barang.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
+        btn_tambah_barang.setForeground(new java.awt.Color(255, 255, 255));
+        btn_tambah_barang.setText("Tambah Barang");
+        btn_tambah_barang.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_tambah_barangActionPerformed(evt);
             }
         });
 
@@ -273,15 +276,17 @@ public class FramePopUpTambahBarang extends javax.swing.JFrame {
                         .addGap(110, 110, 110)
                         .addComponent(jLabel14)
                         .addGap(63, 63, 63)
-                        .addComponent(tf_popupTambah_stok, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(210, 210, 210)
-                        .addComponent(btn_popupTambah_batal)))
+                        .addComponent(tf_popupTambah_stok, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(65, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(btn_popupTambah_tambah)
-                .addGap(78, 78, 78))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(btn_tambah_barang, javax.swing.GroupLayout.PREFERRED_SIZE, 342, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(80, 80, 80))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(btn_popupTambah_batal)
+                        .addGap(207, 207, 207))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -318,11 +323,11 @@ public class FramePopUpTambahBarang extends javax.swing.JFrame {
                         .addComponent(jLabel5))
                     .addComponent(jLabel14)
                     .addComponent(tf_popupTambah_stok, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(27, 27, 27)
-                .addComponent(btn_popupTambah_tambah)
+                .addGap(29, 29, 29)
+                .addComponent(btn_tambah_barang, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btn_popupTambah_batal)
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addContainerGap(23, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -363,8 +368,9 @@ public class FramePopUpTambahBarang extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_cb_popupTambah_jenis_barangActionPerformed
 
-    private void btn_popupTambah_tambahMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_popupTambah_tambahMouseClicked
-        int hasil = JOptionPane.showConfirmDialog(null, "Tambahkan barang?", "", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+    private void btn_tambah_barangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tambah_barangActionPerformed
+        // TODO add your handling code here:
+                int hasil = JOptionPane.showConfirmDialog(null, "Tambahkan barang?", "", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (hasil == JOptionPane.YES_OPTION && (!tf_popupTambah_namaBarang.getText().equals("") && !tf_popupTambah_hargaJual.getText().equals("") && !tf_popupTambah_hargaPokok.getText().equals("") && !tf_popupTambah_stok.getText().equals("")) ) {
             String nama_barang = tf_popupTambah_namaBarang.getText();
             int harga_pokok = Integer.parseInt(tf_popupTambah_hargaPokok.getText().toString());
@@ -387,7 +393,7 @@ public class FramePopUpTambahBarang extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Terdapat field yang masih kosong");
         }
          
-    }//GEN-LAST:event_btn_popupTambah_tambahMouseClicked
+    }//GEN-LAST:event_btn_tambah_barangActionPerformed
 
     /**
      * @param args the command line arguments
@@ -426,7 +432,7 @@ public class FramePopUpTambahBarang extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel btn_popupTambah_batal;
-    private javax.swing.JLabel btn_popupTambah_tambah;
+    private javax.swing.JButton btn_tambah_barang;
     private javax.swing.JComboBox cb_popupTambah_jenis_barang;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel12;
