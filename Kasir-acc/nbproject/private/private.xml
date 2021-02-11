@@ -4,12 +4,13 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/D:/Dev/Netbeans/kasir-acc-java/Kasir-acc/src/kasiracc/session.java</file>
-            <file>file:/D:/Dev/Netbeans/kasir-acc-java/Kasir-acc/src/kasiracc/FrameCetakStrukPopUp.java</file>
             <file>file:/D:/Dev/Netbeans/kasir-acc-java/Kasir-acc/src/kasiracc/FrameLogin.java</file>
             <file>file:/D:/Dev/Netbeans/kasir-acc-java/Kasir-acc/src/kasiracc/FramePopUpTambahBarang.java</file>
             <file>file:/D:/Dev/Netbeans/kasir-acc-java/Kasir-acc/src/kasiracc/Transaksi.java</file>
             <file>file:/D:/Dev/Netbeans/kasir-acc-java/Kasir-acc/src/kasiracc/koneksi.java</file>
             <file>file:/D:/Dev/Netbeans/kasir-acc-java/Kasir-acc/src/kasiracc/FrameTableSearchCashierPopUp.java</file>
+            <file>file:/D:/Dev/Netbeans/kasir-acc-java/Kasir-acc/src/kasiracc/FrameOpsiCetakPopUp.java</file>
+            <file>file:/D:/Dev/Netbeans/kasir-acc-java/Kasir-acc/src/struk/report_bulanan.jrxml</file>
             <file>file:/D:/Dev/Netbeans/kasir-acc-java/Kasir-acc/src/kasiracc/Barang.java</file>
             <file>file:/D:/Dev/Netbeans/kasir-acc-java/Kasir-acc/src/kasiracc/Main.java</file>
             <file>file:/D:/Dev/Netbeans/kasir-acc-java/Kasir-acc/src/kasiracc/arrayListBarang.java</file>
@@ -18,6 +19,7 @@
             <file>file:/D:/Dev/Netbeans/kasir-acc-java/Kasir-acc/src/struk/strukbelanja.jrxml</file>
             <file>file:/D:/Dev/Netbeans/kasir-acc-java/Kasir-acc/src/kasiracc/FrameTableEnteredCashierPopUp.java</file>
             <file>file:/D:/Dev/Netbeans/kasir-acc-java/Kasir-acc/src/kasiracc/res.java</file>
+            <file>file:/D:/Dev/Netbeans/kasir-acc-java/Kasir-acc/src/kasiracc/KasirAcc.java</file>
             <file>file:/D:/Dev/Netbeans/kasir-acc-java/Kasir-acc/src/kasiracc/FrameCashier.java</file>
         </group>
     </open-files>

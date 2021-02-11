@@ -286,6 +286,18 @@ public class FrameCashier extends javax.swing.JFrame {
         return result;
     }
 
+    private static String setDotsCurrency(double number) {
+        DecimalFormat kursIndonesia = (DecimalFormat) DecimalFormat.getCurrencyInstance();
+        DecimalFormatSymbols formatRp = new DecimalFormatSymbols();
+
+        formatRp.setMonetaryDecimalSeparator(',');
+        formatRp.setGroupingSeparator('.');
+        kursIndonesia.setDecimalFormatSymbols(formatRp);
+        String result = kursIndonesia.format(number);
+
+        return result;
+    }
+
     private void tampilTabelBarang(String indexCari) {
         try {
 
@@ -332,6 +344,48 @@ public class FrameCashier extends javax.swing.JFrame {
         tf_cashier_diskon.setText("");
         tf_cashier_dibayarkan.setText("");
         lbl_cashier_kembalian.setText(convertToCurrency(0));
+    }
+
+    private boolean tambahTransaksi(int id_barang, int id_admin, int qty) {
+
+        try {
+            String query = "Insert into transaksi(id_barang, id_admin, qty) VALUES(" + id_barang + ", " + id_admin + ", " + qty + ")";
+            PreparedStatement pst = conn.prepareStatement(query);
+            pst.execute();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private boolean finalizeTransaksi() {
+        try {
+            // buat objek statement
+            stmt = conn.createStatement();
+
+            // buat query ke database
+            String query = "Select barang.nama_barang as nama_barang, harga_jual, stok_barang, temp_transaksi.id_barang as id_barang, temp_transaksi.id_admin as id_admin, qty, tanggal_pembelian "
+                    + "from barang, temp_transaksi, admin "
+                    + "WHERE barang.id_barang=temp_transaksi.id_barang and temp_transaksi.id_admin=admin.id_admin order by id_barang";
+
+            rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                int id_barang = rs.getInt("id_barang");
+                int id_admin = rs.getInt("id_admin");
+                String nama_barang = rs.getString("nama_barang");
+                int qty = rs.getInt("qty");
+                int harga_jual = rs.getInt("harga_jual");
+                if (tambahTransaksi(id_barang, id_admin, qty) == false) {
+                    return false;
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Terjadi kesalahan saat mencatat transaksi dalam keranjang\nError:" + e);
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -894,7 +948,6 @@ public class FrameCashier extends javax.swing.JFrame {
     }//GEN-LAST:event_tabel_keranjangMouseClicked
 
     private void btn_proses_transaksiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_proses_transaksiActionPerformed
-        // TODO add your handling code here:
         //        new FrameCetakStrukPopUp().setVisible(true);
 
         try {
@@ -919,16 +972,26 @@ public class FrameCashier extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(null, "Jumlah tunai kurang dari total keseluruhan belanja.");
                 } else {
                     // Uang cukup
+                    if (JOptionPane.showConfirmDialog(null, "Proses Transaksi?\nTransaksi akan tercatat ketika anda memilih \"Ya\"", null, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 
-                    parameter.put("total", total + "");
-                    parameter.put("diskon", diskon + "");
-                    parameter.put("dibayarkan", dibayarkan + "");
-                    parameter.put("kembalian", kembalian + "");
+                        parameter.put("total", total + "");
+                        parameter.put("diskon", diskon + "");
+                        parameter.put("dibayarkan", dibayarkan + "");
+                        parameter.put("kembalian", kembalian + "");
 
-                    JasperReport jasperReport = JasperCompileManager.compileReport(file);
-                    JasperPrint print = JasperFillManager.fillReport(jasperReport, parameter, conn);
-                    JasperViewer.viewReport(print, false);
+                        JasperReport jasperReport = JasperCompileManager.compileReport(file);
+                        JasperPrint print = JasperFillManager.fillReport(jasperReport, parameter, conn);
+                        JasperViewer.viewReport(print, false);
 
+                        //Pindah dari tabel temp ke tabel transaksi
+                        if (finalizeTransaksi() == true) {
+                            truncateTemp();
+                            refreshKeranjang();
+                            resetPembayaran();
+                        } else { 
+                            JOptionPane.showMessageDialog(null, "Terjadi kesalahan saat memproses pembelian.");
+                        }
+                    }
                 }
             } else {
                 JOptionPane.showMessageDialog(null, "Nominal pembayaran belum diisi");
@@ -937,6 +1000,9 @@ public class FrameCashier extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Terjadi kesalahan saat memproses pembelian.\n Error: " + e);
             e.printStackTrace();
         }
+
+//            prosesTransaksi();
+
     }//GEN-LAST:event_btn_proses_transaksiActionPerformed
 
     private void btn_batal_beliActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_batal_beliActionPerformed

@@ -24,12 +24,10 @@ public class FramePopUpTambahBarang extends javax.swing.JFrame {
     /**
      * Creates new form FramePopUpTambahBarang
      */
-    
-    
     static Connection conn;
     static Statement stmt;
     static ResultSet rs;
-    
+
     public FramePopUpTambahBarang() {
         setUndecorated(true);
         initComponents();
@@ -46,7 +44,7 @@ public class FramePopUpTambahBarang extends javax.swing.JFrame {
         koneksi kon = new koneksi();
         conn = kon.getConnection();
     }
-    
+
     private void tampilCombobox() {
         cb_popupTambah_jenis_barang.removeAllItems();
         try {
@@ -75,7 +73,7 @@ public class FramePopUpTambahBarang extends javax.swing.JFrame {
             e.printStackTrace();
         }
     }
-    
+
     private void insertData(Object[] ob) {
         int id_jenis_barang = Integer.parseInt(ob[0].toString());
         String nama_barang = ob[1].toString();
@@ -370,29 +368,32 @@ public class FramePopUpTambahBarang extends javax.swing.JFrame {
 
     private void btn_tambah_barangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tambah_barangActionPerformed
         // TODO add your handling code here:
-                int hasil = JOptionPane.showConfirmDialog(null, "Tambahkan barang?", "", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-        if (hasil == JOptionPane.YES_OPTION && (!tf_popupTambah_namaBarang.getText().equals("") && !tf_popupTambah_hargaJual.getText().equals("") && !tf_popupTambah_hargaPokok.getText().equals("") && !tf_popupTambah_stok.getText().equals("")) ) {
-            String nama_barang = tf_popupTambah_namaBarang.getText();
-            int harga_pokok = Integer.parseInt(tf_popupTambah_hargaPokok.getText().toString());
-            int harga_jual = Integer.parseInt(tf_popupTambah_hargaJual.getText().toString());
-            int stok = Integer.parseInt(tf_popupTambah_stok.getText().toString());
-            int id_jenis = Integer.parseInt(cb_popupTambah_jenis_barang.getSelectedItem().toString().split(" - ")[0]);
-            Object[] ob = new Object[5];
-            ob[0] = id_jenis;
-            ob[1] = nama_barang;
-            ob[2] = harga_jual;
-            ob[3] = harga_pokok;
-            ob[4] = stok;
-            insertData(ob);
-            FrameInventory.refreshTableRemote();  
-            tf_popupTambah_namaBarang.setText("");
-            tf_popupTambah_hargaJual.setText("");
-            tf_popupTambah_hargaPokok.setText("");
-            tf_popupTambah_stok.setText("");
+        if ((!tf_popupTambah_namaBarang.getText().equals("") && !tf_popupTambah_hargaJual.getText().equals("") && !tf_popupTambah_hargaPokok.getText().equals("") && !tf_popupTambah_stok.getText().equals(""))) {
+
+            int hasil = JOptionPane.showConfirmDialog(null, "Tambahkan barang?", "", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if (hasil == JOptionPane.YES_OPTION) {
+                String nama_barang = tf_popupTambah_namaBarang.getText();
+                int harga_pokok = Integer.parseInt(tf_popupTambah_hargaPokok.getText().toString());
+                int harga_jual = Integer.parseInt(tf_popupTambah_hargaJual.getText().toString());
+                int stok = Integer.parseInt(tf_popupTambah_stok.getText().toString());
+                int id_jenis = Integer.parseInt(cb_popupTambah_jenis_barang.getSelectedItem().toString().split(" - ")[0]);
+                Object[] ob = new Object[5];
+                ob[0] = id_jenis;
+                ob[1] = nama_barang;
+                ob[2] = harga_jual;
+                ob[3] = harga_pokok;
+                ob[4] = stok;
+                insertData(ob);
+                FrameInventory.refreshTableRemote();
+                tf_popupTambah_namaBarang.setText("");
+                tf_popupTambah_hargaJual.setText("");
+                tf_popupTambah_hargaPokok.setText("");
+                tf_popupTambah_stok.setText("");
+            }
+
         } else {
             JOptionPane.showMessageDialog(null, "Terdapat field yang masih kosong");
         }
-         
     }//GEN-LAST:event_btn_tambah_barangActionPerformed
 
     /**

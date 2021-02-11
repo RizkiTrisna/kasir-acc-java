@@ -192,8 +192,8 @@ public class FrameTableSearchCashierPopUp extends javax.swing.JFrame {
         lbl_harga = new javax.swing.JLabel();
         jLabel17 = new javax.swing.JLabel();
         tf_qty = new javax.swing.JTextField();
-        btn_tambah = new javax.swing.JLabel();
         btn_batal = new javax.swing.JLabel();
+        btn_tambah = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -262,20 +262,22 @@ public class FrameTableSearchCashierPopUp extends javax.swing.JFrame {
             }
         });
 
-        btn_tambah.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
-        btn_tambah.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/btn_tambah_keranjang.png"))); // NOI18N
-        btn_tambah.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btn_tambahMouseClicked(evt);
-            }
-        });
-
         btn_batal.setFont(new java.awt.Font("Assistant", 0, 26)); // NOI18N
         btn_batal.setForeground(new java.awt.Color(168, 168, 168));
         btn_batal.setText("Batalkan");
         btn_batal.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btn_batalMouseClicked(evt);
+            }
+        });
+
+        btn_tambah.setBackground(new java.awt.Color(26, 115, 232));
+        btn_tambah.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
+        btn_tambah.setForeground(new java.awt.Color(255, 255, 255));
+        btn_tambah.setText("Tambahkan ke Keranjang");
+        btn_tambah.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_tambahActionPerformed(evt);
             }
         });
 
@@ -287,7 +289,12 @@ public class FrameTableSearchCashierPopUp extends javax.swing.JFrame {
                 .addGap(66, 66, 66)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(btn_tambah)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btn_tambah, javax.swing.GroupLayout.PREFERRED_SIZE, 342, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(118, 118, 118)
+                                .addComponent(btn_batal)
+                                .addGap(127, 127, 127)))
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -325,10 +332,6 @@ public class FrameTableSearchCashierPopUp extends javax.swing.JFrame {
                                 .addComponent(lbl_subtotal))
                             .addComponent(tf_qty))
                         .addGap(68, 68, 68))))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(181, 181, 181)
-                .addComponent(btn_batal)
-                .addGap(0, 0, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -378,11 +381,11 @@ public class FrameTableSearchCashierPopUp extends javax.swing.JFrame {
                         .addComponent(jLabel4)
                         .addGap(11, 11, 11)
                         .addComponent(jLabel5)))
-                .addGap(48, 48, 48)
-                .addComponent(btn_tambah)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 53, Short.MAX_VALUE)
+                .addComponent(btn_tambah, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btn_batal)
-                .addContainerGap(35, Short.MAX_VALUE))
+                .addGap(31, 31, 31))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -393,9 +396,7 @@ public class FrameTableSearchCashierPopUp extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -426,7 +427,7 @@ public class FrameTableSearchCashierPopUp extends javax.swing.JFrame {
         filterAngka(evt);
     }//GEN-LAST:event_tf_qtyKeyTyped
 
-    private void btn_tambahMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_tambahMouseClicked
+    private void btn_tambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tambahActionPerformed
 
         int id_admin = session.getSession().getId_admin();
         int qty = Integer.parseInt(tf_qty.getText());
@@ -472,7 +473,7 @@ public class FrameTableSearchCashierPopUp extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Kolom jumlah barang (Qty) tidak boleh kosong");
         }
 
-    }//GEN-LAST:event_btn_tambahMouseClicked
+    }//GEN-LAST:event_btn_tambahActionPerformed
 
     private boolean filterAngka(KeyEvent evt) {
         if (Character.isAlphabetic(evt.getKeyChar())) {
@@ -535,7 +536,7 @@ public class FrameTableSearchCashierPopUp extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel btn_batal;
-    private javax.swing.JLabel btn_tambah;
+    private javax.swing.JButton btn_tambah;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;

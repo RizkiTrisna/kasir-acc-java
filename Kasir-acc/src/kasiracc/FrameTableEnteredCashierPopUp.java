@@ -123,9 +123,9 @@ public class FrameTableEnteredCashierPopUp extends javax.swing.JFrame {
         lbl_harga = new javax.swing.JLabel();
         jLabel17 = new javax.swing.JLabel();
         tf_qty = new javax.swing.JTextField();
-        btn_ubah_data = new javax.swing.JLabel();
-        lbl_keluarkan = new javax.swing.JLabel();
         lbl_batalkan = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -194,29 +194,32 @@ public class FrameTableEnteredCashierPopUp extends javax.swing.JFrame {
             }
         });
 
-        btn_ubah_data.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
-        btn_ubah_data.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/btn_ubah_keranjang.png"))); // NOI18N
-        btn_ubah_data.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btn_ubah_dataMouseClicked(evt);
-            }
-        });
-
-        lbl_keluarkan.setFont(new java.awt.Font("Assistant", 0, 26)); // NOI18N
-        lbl_keluarkan.setForeground(new java.awt.Color(168, 168, 168));
-        lbl_keluarkan.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/btn_keluarkan_keranjang.png"))); // NOI18N
-        lbl_keluarkan.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                lbl_keluarkanMouseClicked(evt);
-            }
-        });
-
         lbl_batalkan.setFont(new java.awt.Font("Assistant", 0, 26)); // NOI18N
         lbl_batalkan.setForeground(new java.awt.Color(168, 168, 168));
         lbl_batalkan.setText("Batalkan");
         lbl_batalkan.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 lbl_batalkanMouseClicked(evt);
+            }
+        });
+
+        jButton1.setBackground(new java.awt.Color(251, 136, 134));
+        jButton1.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
+        jButton1.setForeground(new java.awt.Color(255, 255, 255));
+        jButton1.setText("Keluarkan");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        jButton2.setBackground(new java.awt.Color(26, 115, 232));
+        jButton2.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
+        jButton2.setForeground(new java.awt.Color(255, 255, 255));
+        jButton2.setText("Ubah Data");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
             }
         });
 
@@ -261,17 +264,16 @@ public class FrameTableEnteredCashierPopUp extends javax.swing.JFrame {
                             .addComponent(lbl_subtotal)))
                     .addComponent(tf_qty))
                 .addGap(57, 57, 57))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(175, 175, 175)
+                .addComponent(lbl_batalkan)
+                .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(lbl_keluarkan)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btn_ubah_data)
-                        .addGap(47, 47, 47))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(lbl_batalkan)
-                        .addGap(169, 169, 169))))
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(48, 48, 48))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -321,13 +323,13 @@ public class FrameTableEnteredCashierPopUp extends javax.swing.JFrame {
                         .addComponent(jLabel4)
                         .addGap(11, 11, 11)
                         .addComponent(jLabel5)))
-                .addGap(51, 51, 51)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(btn_ubah_data)
-                    .addComponent(lbl_keluarkan))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lbl_batalkan)
-                .addContainerGap(25, Short.MAX_VALUE))
+                .addGap(39, 39, 39))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -353,7 +355,24 @@ public class FrameTableEnteredCashierPopUp extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_lbl_batalkanMouseClicked
 
-    private void lbl_keluarkanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_keluarkanMouseClicked
+    private void tf_qtyKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_qtyKeyTyped
+        filterAngka(evt);
+    }//GEN-LAST:event_tf_qtyKeyTyped
+
+    private void tf_qtyKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_qtyKeyReleased
+        if (!tf_qty.getText().equals("")) {
+            int harga_barang = Integer.parseInt(cariDataBarang(Transaksi.getId_barang())[3].toString());
+            int qty = Integer.parseInt(tf_qty.getText().toString());
+            int subtotal = harga_barang * qty;
+
+            lbl_subtotal.setText(subtotal + "");
+
+        } else {
+            lbl_subtotal.setText("0");
+        }
+    }//GEN-LAST:event_tf_qtyKeyReleased
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // hapus data dari keranjang
         try {
 
@@ -382,9 +401,9 @@ public class FrameTableEnteredCashierPopUp extends javax.swing.JFrame {
         }
         // tambahkan qty dari keranjang ke stok di inventory
 
-    }//GEN-LAST:event_lbl_keluarkanMouseClicked
+    }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void btn_ubah_dataMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_ubah_dataMouseClicked
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // Get qty
         Object[] data_barang = cariDataBarang(Transaksi.getId_barang());
         int qty_lama = Transaksi.getQty();
@@ -451,25 +470,7 @@ public class FrameTableEnteredCashierPopUp extends javax.swing.JFrame {
         } else {
             JOptionPane.showMessageDialog(null, "Kolom jumlah barang/qty tidak boleh kosong");
         }
-
-    }//GEN-LAST:event_btn_ubah_dataMouseClicked
-
-    private void tf_qtyKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_qtyKeyTyped
-        filterAngka(evt);
-    }//GEN-LAST:event_tf_qtyKeyTyped
-
-    private void tf_qtyKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_qtyKeyReleased
-        if (!tf_qty.getText().equals("")) {
-            int harga_barang = Integer.parseInt(cariDataBarang(Transaksi.getId_barang())[3].toString());
-            int qty = Integer.parseInt(tf_qty.getText().toString());
-            int subtotal = harga_barang * qty;
-
-            lbl_subtotal.setText(subtotal + "");
-
-        } else {
-            lbl_subtotal.setText("0");
-        }
-    }//GEN-LAST:event_tf_qtyKeyReleased
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     private boolean filterAngka(KeyEvent evt) {
         if (Character.isAlphabetic(evt.getKeyChar())) {
@@ -524,7 +525,8 @@ public class FrameTableEnteredCashierPopUp extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel btn_ubah_data;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
@@ -541,7 +543,6 @@ public class FrameTableEnteredCashierPopUp extends javax.swing.JFrame {
     private javax.swing.JLabel lbl_batalkan;
     private javax.swing.JLabel lbl_harga;
     private javax.swing.JLabel lbl_id;
-    private javax.swing.JLabel lbl_keluarkan;
     private javax.swing.JLabel lbl_nama_barang;
     private javax.swing.JLabel lbl_subtotal;
     private javax.swing.JTextField tf_qty;
