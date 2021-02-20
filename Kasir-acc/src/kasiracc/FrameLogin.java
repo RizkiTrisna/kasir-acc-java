@@ -9,7 +9,6 @@ package kasiracc;
  *
  * @author Rizki Trisna
  */
-
 import java.sql.DriverManager;
 import java.sql.Connection;
 import java.sql.Statement;
@@ -22,50 +21,48 @@ public class FrameLogin extends javax.swing.JFrame {
     /**
      * Creates new form FrameLogin
      */
-    
     static final String jdbc_driver = "com.mysql.jdbc.Driver";
     static final String db_url = "jdbc:mysql://localhost/acc_kasir";
     static final String user = "root";
     static final String pass = "";
-    
+
     static Connection koneksi;
     static Statement stmt;
     static ResultSet rs;
-    
-    private boolean cekLogin(String username, String password){
+
+    private boolean cekLogin(String username, String password) {
         try {
-        
+
             // register driver
             Class.forName(jdbc_driver);
-            
+
             // buat koneksi ke database
             koneksi = DriverManager.getConnection(db_url, user, pass);
-            
+
             // buat objek statement
             stmt = koneksi.createStatement();
-            
+
             // buat query ke database
             String query = "Select * from admin";
-            
+
             rs = stmt.executeQuery(query);
-            
-            while(rs.next()){
-                
-                if(rs.getString("username").toString().equals(username) && rs.getString("password").toString().equals(password) && session.setSession(rs.getInt("id_admin"))) {
-                    System.out.println("Login berhasil");  
+
+            while (rs.next()) {
+
+                if (rs.getString("username").toString().equals(username) && rs.getString("password").toString().equals(password) && session.setSession(rs.getInt("id_admin"))) {
+                    System.out.println("Login berhasil");
                     return true;
-                } 
+                }
             }
-            
-            
-        } catch (Exception e){
+
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
-        
+
         return false;
     }
-    
+
     public FrameLogin() {
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setUndecorated(true);
@@ -87,8 +84,8 @@ public class FrameLogin extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         tf_login_password = new javax.swing.JPasswordField();
-        lbl_login_masuk = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
 
@@ -120,11 +117,9 @@ public class FrameLogin extends javax.swing.JFrame {
                 tf_login_passwordActionPerformed(evt);
             }
         });
-
-        lbl_login_masuk.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/btn_masuk.png"))); // NOI18N
-        lbl_login_masuk.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                lbl_login_masukMouseClicked(evt);
+        tf_login_password.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                tf_login_passwordKeyReleased(evt);
             }
         });
 
@@ -132,6 +127,16 @@ public class FrameLogin extends javax.swing.JFrame {
         jLabel5.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jLabel5MouseClicked(evt);
+            }
+        });
+
+        jButton1.setBackground(new java.awt.Color(26, 115, 232));
+        jButton1.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
+        jButton1.setForeground(new java.awt.Color(255, 255, 255));
+        jButton1.setText("Masuk");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
             }
         });
 
@@ -147,12 +152,12 @@ public class FrameLogin extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(104, 104, 104)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(lbl_login_masuk)
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addComponent(tf_login_username)
                                 .addComponent(jLabel4)
                                 .addComponent(jLabel3)
-                                .addComponent(tf_login_password, javax.swing.GroupLayout.DEFAULT_SIZE, 492, Short.MAX_VALUE)))))
+                                .addComponent(tf_login_password, javax.swing.GroupLayout.DEFAULT_SIZE, 492, Short.MAX_VALUE))
+                            .addComponent(jButton1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 492, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(104, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel1Layout.createSequentialGroup()
@@ -173,9 +178,9 @@ public class FrameLogin extends javax.swing.JFrame {
                 .addComponent(jLabel4)
                 .addGap(14, 14, 14)
                 .addComponent(tf_login_password, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(16, 16, 16)
-                .addComponent(lbl_login_masuk)
-                .addContainerGap(329, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(327, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel1Layout.createSequentialGroup()
                     .addGap(968, 968, 968)
@@ -223,35 +228,43 @@ public class FrameLogin extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void tf_login_usernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tf_login_usernameActionPerformed
-        
+
     }//GEN-LAST:event_tf_login_usernameActionPerformed
 
     private void tf_login_passwordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tf_login_passwordActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_tf_login_passwordActionPerformed
 
-    private void lbl_login_masukMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_login_masukMouseClicked
+    private void jLabel5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MouseClicked
+        if (JOptionPane.showConfirmDialog(null, "Apakah anda ingin menutup aplikasi ini?", "", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION && session.endSession()) {
+
+            System.exit(0);
+        }
+    }//GEN-LAST:event_jLabel5MouseClicked
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        masuk();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void tf_login_passwordKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_login_passwordKeyReleased
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tf_login_passwordKeyReleased
+
+    private void masuk() {
         String in_username = tf_login_username.getText().toString();
         String in_password = tf_login_password.getText().toString();
-        
+
         System.out.println("Username input" + in_username);
         System.out.println("Password input" + in_password);
-        if (cekLogin(in_username, in_password)){
+        if (cekLogin(in_username, in_password)) {
             FrameCashier fc = new FrameCashier();
             fc.show();
             this.dispose();
         } else {
-            JOptionPane.showMessageDialog(null, "Username atau password salah" );
+            JOptionPane.showMessageDialog(null, "Username atau password salah");
         }
-        
-    }//GEN-LAST:event_lbl_login_masukMouseClicked
 
-    private void jLabel5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MouseClicked
-        if (JOptionPane.showConfirmDialog(null, "Apakah anda ingin menutup aplikasi ini?", "", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION && session.endSession()) {
-            
-            System.exit(0);
-        }
-    }//GEN-LAST:event_jLabel5MouseClicked
+    }
 
     /**
      * @param args the command line arguments
@@ -289,6 +302,7 @@ public class FrameLogin extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -296,7 +310,6 @@ public class FrameLogin extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JLabel lbl_login_masuk;
     private javax.swing.JPasswordField tf_login_password;
     private javax.swing.JTextField tf_login_username;
     // End of variables declaration//GEN-END:variables

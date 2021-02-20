@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="groovy" pageWidth="595" pageHeight="842" columnWidth="451" leftMargin="72" rightMargin="72" topMargin="20" bottomMargin="20" uuid="e34d162e-07ff-4477-acab-4499d332eded">
-	<property name="ireport.zoom" value="1.7715610000000117"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="38"/>
+	<property name="ireport.zoom" value="3.452271214393126"/>
+	<property name="ireport.x" value="862"/>
+	<property name="ireport.y" value="162"/>
 	<parameter name="query" class="java.lang.String">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
@@ -66,14 +66,14 @@
 				<text><![CDATA[Periode : ]]></text>
 			</staticText>
 			<textField>
-				<reportElement uuid="90f11b67-ea1f-40a3-ba3b-045cf078dfe5" x="194" y="1" width="38" height="17"/>
+				<reportElement uuid="90f11b67-ea1f-40a3-ba3b-045cf078dfe5" x="194" y="1" width="52" height="17"/>
 				<textElement>
 					<font fontName="Times New Roman" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{bulan}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="90f11b67-ea1f-40a3-ba3b-045cf078dfe5" x="232" y="1" width="54" height="17"/>
+				<reportElement uuid="90f11b67-ea1f-40a3-ba3b-045cf078dfe5" x="246" y="1" width="54" height="17"/>
 				<textElement>
 					<font fontName="Times New Roman" size="12"/>
 				</textElement>
@@ -88,7 +88,7 @@
 				<textElement>
 					<font fontName="Times New Roman" size="12"/>
 				</textElement>
-				<text><![CDATA[Tanggal]]></text>
+				<text><![CDATA[Tgl]]></text>
 			</staticText>
 			<staticText>
 				<reportElement uuid="e7f23033-ed00-492a-ad35-0922cc076614" x="44" y="4" width="69" height="17"/>
@@ -102,10 +102,10 @@
 				<textElement>
 					<font fontName="Times New Roman" size="12"/>
 				</textElement>
-				<text><![CDATA[Nama Barang]]></text>
+				<text><![CDATA[Nama]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="e7f23033-ed00-492a-ad35-0922cc076614" x="183" y="4" width="37" height="17"/>
+				<reportElement uuid="e7f23033-ed00-492a-ad35-0922cc076614" x="186" y="4" width="37" height="17"/>
 				<textElement>
 					<font fontName="Times New Roman" size="12"/>
 				</textElement>
@@ -119,14 +119,14 @@
 				<text><![CDATA[Nilai Penjualan]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="e7f23033-ed00-492a-ad35-0922cc076614" x="307" y="4" width="77" height="17"/>
+				<reportElement uuid="e7f23033-ed00-492a-ad35-0922cc076614" x="312" y="4" width="77" height="17"/>
 				<textElement textAlignment="Right">
 					<font fontName="Times New Roman" size="12"/>
 				</textElement>
 				<text><![CDATA[Nilai Pokok]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="e7f23033-ed00-492a-ad35-0922cc076614" x="384" y="4" width="67" height="17"/>
+				<reportElement uuid="e7f23033-ed00-492a-ad35-0922cc076614" x="398" y="4" width="53" height="17"/>
 				<textElement textAlignment="Right">
 					<font fontName="Times New Roman" size="12"/>
 				</textElement>
@@ -161,28 +161,28 @@
 				<textFieldExpression><![CDATA[$F{nama_barang}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="ff39d727-5277-42c0-b638-0f558cf91d91" x="183" y="0" width="26" height="20"/>
+				<reportElement uuid="ff39d727-5277-42c0-b638-0f558cf91d91" x="191" y="0" width="26" height="20"/>
 				<textElement>
 					<font fontName="Times New Roman" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{qty}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="ff39d727-5277-42c0-b638-0f558cf91d91" x="220" y="0" width="87" height="20"/>
+				<reportElement uuid="ff39d727-5277-42c0-b638-0f558cf91d91" x="222" y="0" width="87" height="20"/>
 				<textElement textAlignment="Right">
 					<font fontName="Times New Roman" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{nilai_jual}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="ff39d727-5277-42c0-b638-0f558cf91d91" x="307" y="0" width="77" height="20"/>
+				<reportElement uuid="ff39d727-5277-42c0-b638-0f558cf91d91" x="312" y="0" width="77" height="20"/>
 				<textElement textAlignment="Right">
 					<font fontName="Times New Roman" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{nilai_pokok}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="ff39d727-5277-42c0-b638-0f558cf91d91" x="384" y="0" width="67" height="20"/>
+				<reportElement uuid="ff39d727-5277-42c0-b638-0f558cf91d91" x="398" y="0" width="53" height="20"/>
 				<textElement textAlignment="Right">
 					<font fontName="Times New Roman" size="12"/>
 				</textElement>
@@ -217,14 +217,14 @@
 				<textFieldExpression><![CDATA[$P{total_jual}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="ff39d727-5277-42c0-b638-0f558cf91d91" x="307" y="4" width="77" height="17"/>
+				<reportElement uuid="ff39d727-5277-42c0-b638-0f558cf91d91" x="312" y="4" width="77" height="17"/>
 				<textElement textAlignment="Right">
 					<font fontName="Times New Roman" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{total_pokok}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="ff39d727-5277-42c0-b638-0f558cf91d91" x="388" y="4" width="63" height="17"/>
+				<reportElement uuid="ff39d727-5277-42c0-b638-0f558cf91d91" x="398" y="4" width="53" height="17"/>
 				<textElement textAlignment="Right">
 					<font fontName="Times New Roman" size="12"/>
 				</textElement>

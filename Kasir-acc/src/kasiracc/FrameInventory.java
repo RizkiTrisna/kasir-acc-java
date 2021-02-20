@@ -289,10 +289,10 @@ public class FrameInventory extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
+        nav_cashier = new javax.swing.JButton();
+        nav_inventory_selected = new javax.swing.JButton();
+        nav_stat = new javax.swing.JButton();
+        nav_logout = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         tf_inventory_cari = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -327,26 +327,30 @@ public class FrameInventory extends javax.swing.JFrame {
 
         jPanel1.setBackground(new java.awt.Color(70, 87, 117));
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/btn_cart.png"))); // NOI18N
-        jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel1MouseClicked(evt);
+        nav_cashier.setBackground(new java.awt.Color(70, 87, 117));
+        nav_cashier.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/icon_cart_only.png"))); // NOI18N
+        nav_cashier.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nav_cashierActionPerformed(evt);
             }
         });
 
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/btn_inventory_selected.png"))); // NOI18N
+        nav_inventory_selected.setBackground(new java.awt.Color(13, 15, 21));
+        nav_inventory_selected.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/icon_box_only.png"))); // NOI18N
 
-        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/btn_stat.png"))); // NOI18N
-        jLabel3.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel3MouseClicked(evt);
+        nav_stat.setBackground(new java.awt.Color(70, 87, 117));
+        nav_stat.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/icon_graph_only.png"))); // NOI18N
+        nav_stat.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nav_statActionPerformed(evt);
             }
         });
 
-        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/Icon_feather_power.png"))); // NOI18N
-        jLabel4.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel4MouseClicked(evt);
+        nav_logout.setBackground(new java.awt.Color(70, 87, 117));
+        nav_logout.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/Icon_feather_power.png"))); // NOI18N
+        nav_logout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nav_logoutActionPerformed(evt);
             }
         });
 
@@ -356,27 +360,24 @@ public class FrameInventory extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel3))
+                    .addComponent(nav_cashier, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(nav_inventory_selected, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(nav_stat, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(nav_logout, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(38, 38, 38)
-                .addComponent(jLabel4)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(100, 100, 100)
-                .addComponent(jLabel1)
+                .addComponent(nav_cashier, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
-                .addComponent(jLabel2)
+                .addComponent(nav_inventory_selected, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
-                .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel4)
-                .addGap(120, 120, 120))
+                .addComponent(nav_stat, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(500, 500, 500)
+                .addComponent(nav_logout, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(194, Short.MAX_VALUE))
         );
 
         jPanel2.setBackground(new java.awt.Color(245, 249, 252));
@@ -407,6 +408,7 @@ public class FrameInventory extends javax.swing.JFrame {
         )
         {public boolean isCellEditable(int row, int column){return false;}}
     );
+    tabel_barang.setRowHeight(24);
     tabel_barang.addMouseListener(new java.awt.event.MouseAdapter() {
         public void mouseClicked(java.awt.event.MouseEvent evt) {
             tabel_barangMouseClicked(evt);
@@ -598,7 +600,7 @@ public class FrameInventory extends javax.swing.JFrame {
                             .addComponent(jLabel9)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 53, Short.MAX_VALUE)
                             .addComponent(jLabel14)))
-                    .addGap(179, 430, Short.MAX_VALUE))
+                    .addContainerGap(430, Short.MAX_VALUE))
                 .addGroup(jPanel3Layout.createSequentialGroup()
                     .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -633,12 +635,12 @@ public class FrameInventory extends javax.swing.JFrame {
                             .addComponent(btn_hapus_data, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGap(70, 70, 70)
                             .addComponent(btn_perbarui_data, javax.swing.GroupLayout.PREFERRED_SIZE, 283, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGap(0, 0, Short.MAX_VALUE))))
+                    .addGap(0, 0, 0))))
     );
     jPanel3Layout.setVerticalGroup(
         jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
         .addGroup(jPanel3Layout.createSequentialGroup()
-            .addGap(293, 293, 293)
+            .addGap(218, 218, 218)
             .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                 .addComponent(jLabel11)
                 .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -680,11 +682,11 @@ public class FrameInventory extends javax.swing.JFrame {
                 .addGroup(jPanel3Layout.createSequentialGroup()
                     .addGap(18, 18, 18)
                     .addComponent(tf_inventory_stok, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-            .addGap(165, 165, 165)
+            .addGap(233, 233, 233)
             .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                 .addComponent(btn_hapus_data, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addComponent(btn_perbarui_data, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGap(84, 84, 84))
+            .addContainerGap(169, Short.MAX_VALUE))
     );
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -711,25 +713,6 @@ public class FrameInventory extends javax.swing.JFrame {
     private void tf_inventory_cariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tf_inventory_cariActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_tf_inventory_cariActionPerformed
-
-    private void jLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseClicked
-        FrameCashier fc = new FrameCashier();
-        fc.setVisible(true);
-        this.dispose();
-    }//GEN-LAST:event_jLabel1MouseClicked
-
-    private void jLabel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseClicked
-        FrameStat fs = new FrameStat();
-        fs.setVisible(true);
-        this.dispose();
-    }//GEN-LAST:event_jLabel3MouseClicked
-
-    private void jLabel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseClicked
-        
-        if (JOptionPane.showConfirmDialog(null, "Apakah anda ingin menutup aplikasi ini?", "", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION && session.endSession()) {
-            System.exit(0);
-        }
-    }//GEN-LAST:event_jLabel4MouseClicked
 
     private void tabel_barangMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabel_barangMouseClicked
 
@@ -866,6 +849,25 @@ public class FrameInventory extends javax.swing.JFrame {
         ob_barang = new Barang();
     }//GEN-LAST:event_btn_hapus_dataActionPerformed
 
+    private void nav_cashierActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nav_cashierActionPerformed
+        FrameCashier fc = new FrameCashier();
+        fc.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_nav_cashierActionPerformed
+
+    private void nav_statActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nav_statActionPerformed
+        FrameStat fs = new FrameStat();
+        fs.setVisible(true);
+        this.dispose();         
+    }//GEN-LAST:event_nav_statActionPerformed
+
+    private void nav_logoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nav_logoutActionPerformed
+        
+        if (JOptionPane.showConfirmDialog(null, "Apakah anda ingin menutup aplikasi ini?", "", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION && session.endSession()) {
+            System.exit(0);
+        }
+    }//GEN-LAST:event_nav_logoutActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -908,7 +910,6 @@ public class FrameInventory extends javax.swing.JFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
@@ -919,10 +920,7 @@ public class FrameInventory extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
@@ -930,6 +928,10 @@ public class FrameInventory extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton nav_cashier;
+    private javax.swing.JButton nav_inventory_selected;
+    private javax.swing.JButton nav_logout;
+    private javax.swing.JButton nav_stat;
     private static javax.swing.JTable tabel_barang;
     private javax.swing.JTextField tf_inventory_cari;
     private javax.swing.JTextField tf_inventory_hrgJual;

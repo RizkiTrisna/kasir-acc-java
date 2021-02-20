@@ -5,10 +5,20 @@
  */
 package kasiracc;
 
+import java.awt.List;
+import java.awt.event.KeyEvent;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
@@ -37,18 +47,153 @@ public class FrameStat extends javax.swing.JFrame {
         }
         prepareTable();
         tampilTabelHistory();
+        tampilDetail();
 //        updatePembelianTerbanyak(); 
+    }
+
+    private void tampilDetail() {
+        // Menentukan awal dan akhir bulan periode
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+        LocalDateTime now = LocalDateTime.now();
+
+        String angka_bulan = dtf.format(now).toString().split("/")[1];
+        String tahun = dtf.format(now).toString().split("/")[0];
+        String param_tgl_awal = tahun.trim() + "-" + angka_bulan.trim() + "-1";
+        String param_tgl_awal_dmyyyy = "1" + "/" + angka_bulan.trim() + "/" + tahun.trim();
+
+        //Mengambil data akhir bulan 
+        LocalDate convertedData = LocalDate.parse(param_tgl_awal_dmyyyy, DateTimeFormatter.ofPattern("d/M/yyyy"));
+        convertedData = convertedData.withDayOfMonth(convertedData.getMonth().length(convertedData.isLeapYear()));
+        String param_tgl_akhir = convertedData.toString();
+
+        tampilPendapatanSebulan();
         tampilQtySebulan();
-        tampilJumlahSebulan();
+        tampilPalingBanyakDibeli();
     }
-    
-    private void tampilJumlahSebulan(){
-        
+
+    private void tampilPendapatanSebulan() {
+        // select data selama sebulan terakhir
+        try {
+
+            // buat objek statement
+            stmt = conn.createStatement();
+
+            // buat query ke database
+            String query = "select sum((barang.harga_jual * qty)) as nilai_kotor, sum((barang.harga_pokok * qty)) as nilai_bersih from transaksi, barang where transaksi.id_barang=barang.id_barang and DATEDIFF(CURRENT_TIMESTAMP, transaksi.tanggal_pembelian) BETWEEN 0 AND 30";
+
+            rs = stmt.executeQuery(query);
+
+            int kotor_sebulan = 0;
+            int bersih_sebulan = 0;
+
+            while (rs.next()) {
+                kotor_sebulan = rs.getInt("nilai_kotor");
+                bersih_sebulan = rs.getInt("nilai_bersih");
+            }
+            lbl_total_pendapatan.setText(setDotsCurrency(Double.parseDouble(String.valueOf(kotor_sebulan))));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
-    
-    private void tampilQtySebulan(){
-    
+
+    private static String setDotsCurrency(double number) {
+        DecimalFormat kursIndonesia = (DecimalFormat) DecimalFormat.getCurrencyInstance();
+        DecimalFormatSymbols formatRp = new DecimalFormatSymbols();
+
+        formatRp.setCurrencySymbol(" ");
+        formatRp.setMonetaryDecimalSeparator(',');
+        formatRp.setGroupingSeparator('.');
+        kursIndonesia.setDecimalFormatSymbols(formatRp);
+        String result = kursIndonesia.format(number);
+
+        return result;
     }
+
+    private void tampilQtySebulan() {
+        try {
+
+            // buat objek statement
+            stmt = conn.createStatement();
+
+            // buat query ke database
+            String query = "select count(qty) as n_qty from transaksi where DATEDIFF(CURRENT_TIMESTAMP, transaksi.tanggal_pembelian) BETWEEN 0 AND 30";
+
+            rs = stmt.executeQuery(query);
+
+            int n_qty = 0;
+
+            while (rs.next()) {
+                n_qty = rs.getInt("n_qty");
+            }
+            lbl_banyak_30_transaksi.setText(String.valueOf(n_qty));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void tampilPalingBanyakDibeli() {
+        try {
+
+            // buat objek statement
+            stmt = conn.createStatement();
+
+            // buat query ke database
+            String query = "select sum(qty) as total_qty, transaksi.id_barang, nama_barang from transaksi, barang "
+                    + "where transaksi.id_barang=barang.id_barang and DATEDIFF(CURRENT_TIMESTAMP, transaksi.tanggal_pembelian) "
+                    + "BETWEEN 0 AND 30 GROUP BY id_barang Order By id_barang";
+
+            rs = stmt.executeQuery(query);
+
+            // Storage pencarian terbanyak
+            Map<Integer, Map<String, String>> map_induk = new HashMap<>();
+
+            // inisialisasi index
+            int index = 0;
+            int index_terbanyak = 0;
+
+            //temporary data
+            int temp_total = 0;
+            while (rs.next()) {
+
+                int total_qty = rs.getInt("total_qty");
+                int id_barang = rs.getInt("id_barang");
+                String nama_barang = rs.getString("nama_barang");
+
+                Map<String, String> map_child = new HashMap<>();
+
+                map_child.put("total_qty", String.valueOf(total_qty));
+                map_child.put("id_barang", String.valueOf(id_barang));
+                map_child.put("nama_barang", nama_barang);
+
+                map_induk.put(index, map_child);
+
+                if (total_qty > temp_total) {
+                    temp_total = total_qty;
+                    index_terbanyak = index;
+                }
+                index++;
+            }
+
+            System.out.println("index terbanyak : " + index_terbanyak);
+            System.out.println("Dengan nama barang : " + map_induk.get(index_terbanyak).get("nama_barang"));
+
+            // set label
+            String temp_nama_barang = map_induk.get(index_terbanyak).get("nama_barang");
+            String nama_barang = temp_nama_barang;
+            
+            //substring nama barang jika terlalu panjang
+            if (temp_nama_barang.length() > 20) {
+                nama_barang = temp_nama_barang.substring(0, 20);
+            }
+            
+//            set label
+            lbl_paling_banyak_dibeli.setText(nama_barang);
+            lbl_n_banyak_dibeli.setText(map_induk.get(index_terbanyak).get("total_qty").toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private void updatePembelianTerbanyak() {
         try {
 
@@ -126,6 +271,7 @@ public class FrameStat extends javax.swing.JFrame {
             e.printStackTrace();
         }
     }
+
     private void tampilTabelHistory(String indexCari) {
         try {
 
@@ -136,7 +282,7 @@ public class FrameStat extends javax.swing.JFrame {
             String query = "Select transaksi.id_transaksi as id_transaksi, barang.nama_barang as nama_barang, jenis_barang.nama_jenis as jenis_barang, qty, harga_jual, tanggal_pembelian, admin.nama_admin as nama_admin "
                     + "from barang, transaksi, admin, jenis_barang "
                     + "WHERE (barang.id_barang=transaksi.id_barang and transaksi.id_admin=admin.id_admin and jenis_barang.id_jenis=barang.id_jenis_barang) "
-                    + "AND (transaksi.id_transaksi='"+indexCari+"' or barang.nama_barang LIKE '%"+indexCari+"%' or jenis_barang.nama_jenis LIKE '%"+indexCari+"%' or admin.nama_admin LIKE '%"+indexCari+"%' or transaksi.tanggal_pembelian LIKE '%"+indexCari+"%') order by id_transaksi";
+                    + "AND (transaksi.id_transaksi='" + indexCari + "' or barang.nama_barang LIKE '%" + indexCari + "%' or jenis_barang.nama_jenis LIKE '%" + indexCari + "%' or admin.nama_admin LIKE '%" + indexCari + "%' or transaksi.tanggal_pembelian LIKE '%" + indexCari + "%') order by id_transaksi";
 
             rs = stmt.executeQuery(query);
 
@@ -194,10 +340,10 @@ public class FrameStat extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
+        nav_cashier = new javax.swing.JButton();
+        nav_inventory = new javax.swing.JButton();
+        nav_stat_selected = new javax.swing.JButton();
+        nav_logout = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         tf_cari = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -207,41 +353,50 @@ public class FrameStat extends javax.swing.JFrame {
         jLabel18 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
-        lbl_jumlah_transaksi = new javax.swing.JLabel();
+        lbl_banyak_30_transaksi = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
-        lbl_nama_dibeli = new javax.swing.JLabel();
+        lbl_paling_banyak_dibeli = new javax.swing.JLabel();
         jLabel20 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         jButton4 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         lbl_total_pendapatan = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
-        lbl_n_dibeli = new javax.swing.JLabel();
+        lbl_n_banyak_dibeli = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel1.setBackground(new java.awt.Color(70, 87, 117));
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/btn_cart.png"))); // NOI18N
-        jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel1MouseClicked(evt);
+        nav_cashier.setBackground(new java.awt.Color(70, 87, 117));
+        nav_cashier.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/icon_cart_only.png"))); // NOI18N
+        nav_cashier.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nav_cashierActionPerformed(evt);
             }
         });
 
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/btn_inventory.png"))); // NOI18N
-        jLabel2.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel2MouseClicked(evt);
+        nav_inventory.setBackground(new java.awt.Color(70, 87, 117));
+        nav_inventory.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/icon_box_only.png"))); // NOI18N
+        nav_inventory.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nav_inventoryActionPerformed(evt);
             }
         });
 
-        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/btn_stat_selected.png"))); // NOI18N
+        nav_stat_selected.setBackground(new java.awt.Color(13, 15, 21));
+        nav_stat_selected.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/icon_graph_only.png"))); // NOI18N
+        nav_stat_selected.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nav_stat_selectedActionPerformed(evt);
+            }
+        });
 
-        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/Icon_feather_power.png"))); // NOI18N
-        jLabel4.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel4MouseClicked(evt);
+        nav_logout.setBackground(new java.awt.Color(70, 87, 117));
+        nav_logout.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/Icon_feather_power.png"))); // NOI18N
+        nav_logout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nav_logoutActionPerformed(evt);
             }
         });
 
@@ -251,26 +406,24 @@ public class FrameStat extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(36, 36, 36)
-                        .addComponent(jLabel4))
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel3))
+                    .addComponent(nav_stat_selected, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(nav_inventory, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(nav_cashier, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(nav_logout, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(100, 100, 100)
-                .addComponent(jLabel1)
+                .addComponent(nav_cashier, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
-                .addComponent(jLabel2)
+                .addComponent(nav_inventory, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
-                .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel4)
-                .addGap(99, 99, 99))
+                .addComponent(nav_stat_selected, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(500, 500, 500)
+                .addComponent(nav_logout, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(112, Short.MAX_VALUE))
         );
 
         jPanel2.setBackground(new java.awt.Color(245, 249, 252));
@@ -282,6 +435,9 @@ public class FrameStat extends javax.swing.JFrame {
             }
         });
         tf_cari.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                tf_cariKeyPressed(evt);
+            }
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 tf_cariKeyReleased(evt);
             }
@@ -299,6 +455,7 @@ public class FrameStat extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tabel_history.setRowHeight(24);
         jScrollPane1.setViewportView(tabel_history);
 
         jLabel7.setFont(new java.awt.Font("Assistant", 1, 32)); // NOI18N
@@ -321,23 +478,23 @@ public class FrameStat extends javax.swing.JFrame {
         jLabel13.setForeground(new java.awt.Color(112, 112, 112));
         jLabel13.setText(":");
 
-        lbl_jumlah_transaksi.setFont(new java.awt.Font("Assistant", 1, 32)); // NOI18N
-        lbl_jumlah_transaksi.setForeground(new java.awt.Color(112, 112, 112));
-        lbl_jumlah_transaksi.setText("0000000");
+        lbl_banyak_30_transaksi.setFont(new java.awt.Font("Assistant", 1, 32)); // NOI18N
+        lbl_banyak_30_transaksi.setForeground(new java.awt.Color(112, 112, 112));
+        lbl_banyak_30_transaksi.setText("0");
 
         jLabel9.setFont(new java.awt.Font("Assistant", 1, 32)); // NOI18N
         jLabel9.setForeground(new java.awt.Color(112, 112, 112));
-        jLabel9.setText("Paling banyak dibeli");
+        jLabel9.setText("Paling banyak dibeli/30 hari");
 
-        lbl_nama_dibeli.setFont(new java.awt.Font("Assistant", 1, 32)); // NOI18N
-        lbl_nama_dibeli.setForeground(new java.awt.Color(112, 112, 112));
-        lbl_nama_dibeli.setText("XXXXXXXXX");
+        lbl_paling_banyak_dibeli.setFont(new java.awt.Font("Assistant", 1, 32)); // NOI18N
+        lbl_paling_banyak_dibeli.setForeground(new java.awt.Color(112, 112, 112));
+        lbl_paling_banyak_dibeli.setText("XXXXXXXXXX");
 
         jLabel20.setFont(new java.awt.Font("Assistant", 1, 32)); // NOI18N
         jLabel20.setForeground(new java.awt.Color(112, 112, 112));
         jLabel20.setText(":");
 
-        jLabel10.setFont(new java.awt.Font("Assistant", 1, 24)); // NOI18N
+        jLabel10.setFont(new java.awt.Font("Assistant", 0, 24)); // NOI18N
         jLabel10.setForeground(new java.awt.Color(112, 112, 112));
         jLabel10.setText("transaksi )");
 
@@ -360,15 +517,15 @@ public class FrameStat extends javax.swing.JFrame {
 
         lbl_total_pendapatan.setFont(new java.awt.Font("Assistant", 1, 32)); // NOI18N
         lbl_total_pendapatan.setForeground(new java.awt.Color(112, 112, 112));
-        lbl_total_pendapatan.setText("0.000.000");
+        lbl_total_pendapatan.setText("0000000");
 
-        jLabel11.setFont(new java.awt.Font("Assistant", 1, 24)); // NOI18N
+        jLabel11.setFont(new java.awt.Font("Assistant", 0, 24)); // NOI18N
         jLabel11.setForeground(new java.awt.Color(112, 112, 112));
         jLabel11.setText("(");
 
-        lbl_n_dibeli.setFont(new java.awt.Font("Assistant", 1, 24)); // NOI18N
-        lbl_n_dibeli.setForeground(new java.awt.Color(112, 112, 112));
-        lbl_n_dibeli.setText("XXX");
+        lbl_n_banyak_dibeli.setFont(new java.awt.Font("Assistant", 0, 24)); // NOI18N
+        lbl_n_banyak_dibeli.setForeground(new java.awt.Color(112, 112, 112));
+        lbl_n_banyak_dibeli.setText("XXX");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -398,41 +555,42 @@ public class FrameStat extends javax.swing.JFrame {
                                     .addGap(18, 18, 18)
                                     .addComponent(jLabel18)
                                     .addGap(28, 28, 28)))
-                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(jPanel2Layout.createSequentialGroup()
-                                    .addComponent(lbl_total_pendapatan)
-                                    .addGap(124, 124, 124))
-                                .addGroup(jPanel2Layout.createSequentialGroup()
-                                    .addComponent(lbl_jumlah_transaksi)
-                                    .addGap(353, 353, 353)
-                                    .addComponent(jLabel9)
-                                    .addGap(83, 83, 83)
-                                    .addComponent(jLabel20)
-                                    .addGap(32, 32, 32)
-                                    .addComponent(lbl_nama_dibeli)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel11)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(lbl_n_dibeli)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(jLabel10)))))
+                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(lbl_banyak_30_transaksi)
+                                .addComponent(lbl_total_pendapatan))
+                            .addGap(205, 205, 205)
+                            .addComponent(jLabel9)
+                            .addGap(22, 22, 22)
+                            .addComponent(jLabel20)
+                            .addGap(32, 32, 32)
+                            .addComponent(lbl_paling_banyak_dibeli)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel11)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(lbl_n_banyak_dibeli)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(jLabel10)))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1706, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(54, Short.MAX_VALUE))
+                .addGap(60, 60, 60))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(103, 103, 103)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel7)
-                    .addComponent(jLabel12)
-                    .addComponent(jLabel9)
-                    .addComponent(jLabel20)
-                    .addComponent(lbl_nama_dibeli)
-                    .addComponent(jLabel10)
-                    .addComponent(lbl_jumlah_transaksi)
-                    .addComponent(lbl_n_dibeli)
-                    .addComponent(jLabel11))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(103, 103, 103)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel7)
+                            .addComponent(jLabel12)
+                            .addComponent(jLabel9)
+                            .addComponent(jLabel20)
+                            .addComponent(lbl_paling_banyak_dibeli)
+                            .addComponent(jLabel10)
+                            .addComponent(lbl_n_banyak_dibeli)
+                            .addComponent(jLabel11)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(lbl_banyak_30_transaksi)))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
@@ -448,7 +606,7 @@ public class FrameStat extends javax.swing.JFrame {
                     .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(23, 23, 23)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 574, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(159, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -462,11 +620,8 @@ public class FrameStat extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -475,24 +630,6 @@ public class FrameStat extends javax.swing.JFrame {
     private void tf_cariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tf_cariActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_tf_cariActionPerformed
-
-    private void jLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseClicked
-        FrameCashier fc = new FrameCashier();
-        fc.setVisible(true);
-        this.dispose();
-    }//GEN-LAST:event_jLabel1MouseClicked
-
-    private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
-        FrameInventory fi = new FrameInventory();
-        fi.setVisible(true);
-        this.dispose();
-    }//GEN-LAST:event_jLabel2MouseClicked
-
-    private void jLabel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseClicked
-        if (JOptionPane.showConfirmDialog(null, "Apakah anda ingin menutup aplikasi ini?", "", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION && session.endSession()) {
-            System.exit(0);
-        }
-    }//GEN-LAST:event_jLabel4MouseClicked
 
     private void tf_cariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_cariKeyReleased
         String indexCari = tf_cari.getText();
@@ -509,6 +646,35 @@ public class FrameStat extends javax.swing.JFrame {
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         new FrameOpsiCetakPopUp().setVisible(true);
     }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void nav_cashierActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nav_cashierActionPerformed
+        FrameCashier fc = new FrameCashier();
+        fc.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_nav_cashierActionPerformed
+
+    private void nav_stat_selectedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nav_stat_selectedActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_nav_stat_selectedActionPerformed
+
+    private void nav_inventoryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nav_inventoryActionPerformed
+        FrameInventory fi = new FrameInventory();
+        fi.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_nav_inventoryActionPerformed
+
+    private void nav_logoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nav_logoutActionPerformed
+
+        if (JOptionPane.showConfirmDialog(null, "Apakah anda ingin menutup aplikasi ini?", "", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION && session.endSession()) {
+            System.exit(0);
+        }
+    }//GEN-LAST:event_nav_logoutActionPerformed
+
+    private void tf_cariKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_cariKeyPressed
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            
+        }
+    }//GEN-LAST:event_tf_cariKeyPressed
 
     /**
      * @param args the command line arguments
@@ -548,26 +714,26 @@ public class FrameStat extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton4;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel18;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JLabel lbl_jumlah_transaksi;
-    private javax.swing.JLabel lbl_n_dibeli;
-    private javax.swing.JLabel lbl_nama_dibeli;
+    private javax.swing.JLabel lbl_banyak_30_transaksi;
+    private javax.swing.JLabel lbl_n_banyak_dibeli;
+    private javax.swing.JLabel lbl_paling_banyak_dibeli;
     private javax.swing.JLabel lbl_total_pendapatan;
+    private javax.swing.JButton nav_cashier;
+    private javax.swing.JButton nav_inventory;
+    private javax.swing.JButton nav_logout;
+    private javax.swing.JButton nav_stat_selected;
     private javax.swing.JTable tabel_history;
     private javax.swing.JTextField tf_cari;
     // End of variables declaration//GEN-END:variables

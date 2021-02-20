@@ -5,6 +5,10 @@
  */
 package kasiracc;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Rizki Trisna
@@ -14,8 +18,15 @@ public class KasirAcc {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
-        // TODO code application logic here
+    // TODO code application logic here
+    public static void main(String[] args) throws SQLException {
+        koneksi kn = new koneksi();
+        Connection con = kn.getConnection();
+        if (con == null) {
+            JOptionPane.showMessageDialog(null, "Terjadi kegagalan saat mengambil data MYSQL");
+        } else {
+            FrameLogin.main(args);            
+        }
     }
-    
+
 }

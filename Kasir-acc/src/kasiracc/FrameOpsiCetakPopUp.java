@@ -261,9 +261,7 @@ public class FrameOpsiCetakPopUp extends javax.swing.JFrame {
             String param_tgl_akhir = convertedData.toString();
 
             // Penentuan lokasi file jasper
-            String file = "src/struk/report_bulanan.jrxml";
-            System.out.println("param awal " + param_tgl_awal);
-            System.out.println("param akhir " + param_tgl_akhir);
+            String file = "src/struk/report_bulanan.jrxml"; 
             // Passing variabel sbg parameter
 //            Map<String, Object> map = new HashMap<>(); 
 //            map.put("query", "select CAST(tanggal_pembelian AS DATE) as tanggal, id_transaksi, barang.nama_barang, qty, (barang.harga_jual * qty) as nilai_jual, (barang.harga_pokok * qty) as nilai_pokok, ((barang.harga_jual * qty) - (barang.harga_pokok * qty)) as laba "

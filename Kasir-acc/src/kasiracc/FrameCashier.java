@@ -14,6 +14,7 @@ import java.sql.Statement;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
@@ -298,7 +299,7 @@ public class FrameCashier extends javax.swing.JFrame {
         return result;
     }
 
-    private void tampilTabelBarang(String indexCari) {
+    private Map<Integer, Map<String, String>> tampilTabelBarang(String indexCari) {
         try {
 
             // buat objek statement
@@ -310,19 +311,46 @@ public class FrameCashier extends javax.swing.JFrame {
 
             rs = stmt.executeQuery(query);
 
+            // Storage induk 
+            Map<Integer, Map<String, String>> map_induk = new HashMap<>();
+            int index = 0;
             while (rs.next()) {
                 Object[] o = new Object[6];
-                o[0] = rs.getInt("id_barang") + "";
-                o[1] = rs.getString("nama_barang");
-                o[2] = rs.getString("nama_jenis");
-                o[3] = rs.getInt("harga_jual");
-                o[4] = rs.getInt("stok_barang");
+                //Storage child
+                Map<String, String> map_child = new HashMap<>();
+                int id_barang = rs.getInt("id_barang");
+                String nama_barang = rs.getString("nama_barang");
+                String nama_jenis = rs.getString("nama_jenis");
+                int harga_jual = rs.getInt("harga_jual");
+                int harga_pokok = rs.getInt("harga_pokok");
+                int stok_barang = rs.getInt("stok_barang");
+
+                // inisialisasi object yang akan menjadi data isi tabel
+                o[0] = id_barang;
+                o[1] = nama_barang;
+                o[2] = nama_jenis;
+                o[3] = harga_jual;
+                o[4] = stok_barang;
                 tmodelBarang.addRow(o);
 
+                // inisialisasi data di map induk
+                map_child.put("id_barang", String.valueOf(id_barang));
+                map_child.put("nama_barang", nama_barang);
+                map_child.put("nama_jenis", nama_jenis);
+                map_child.put("harga_jual", String.valueOf(harga_jual));
+                map_child.put("harga_pokok", String.valueOf(harga_pokok));
+                map_child.put("stok_barang", String.valueOf(stok_barang));
+                map_induk.put(index, map_child);
+                index++;
             }
-
+            if (!map_induk.isEmpty()) {
+                return map_induk;
+            } else {
+                return null;
+            }
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
     }
 
@@ -393,10 +421,10 @@ public class FrameCashier extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
+        nav_cashier_selected = new javax.swing.JButton();
+        nav_inventory = new javax.swing.JButton();
+        nav_stat = new javax.swing.JButton();
+        nav_logout = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         tf_cashier_cari = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -428,31 +456,30 @@ public class FrameCashier extends javax.swing.JFrame {
 
         jPanel1.setBackground(new java.awt.Color(70, 87, 117));
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/btn_cart_active.png"))); // NOI18N
-        jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel1MouseClicked(evt);
+        nav_cashier_selected.setBackground(new java.awt.Color(13, 15, 21));
+        nav_cashier_selected.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/icon_cart_only.png"))); // NOI18N
+
+        nav_inventory.setBackground(new java.awt.Color(70, 87, 117));
+        nav_inventory.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/icon_box_only.png"))); // NOI18N
+        nav_inventory.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nav_inventoryActionPerformed(evt);
             }
         });
 
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/btn_inventory.png"))); // NOI18N
-        jLabel2.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel2MouseClicked(evt);
+        nav_stat.setBackground(new java.awt.Color(70, 87, 117));
+        nav_stat.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/icon_graph_only.png"))); // NOI18N
+        nav_stat.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nav_statActionPerformed(evt);
             }
         });
 
-        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/btn_stat.png"))); // NOI18N
-        jLabel3.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel3MouseClicked(evt);
-            }
-        });
-
-        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/Icon_feather_power.png"))); // NOI18N
-        jLabel4.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel4MouseClicked(evt);
+        nav_logout.setBackground(new java.awt.Color(70, 87, 117));
+        nav_logout.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/Icon_feather_power.png"))); // NOI18N
+        nav_logout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nav_logoutActionPerformed(evt);
             }
         });
 
@@ -462,27 +489,24 @@ public class FrameCashier extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel3))
+                    .addComponent(nav_inventory, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(nav_stat, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(nav_cashier_selected, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(nav_logout, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(36, 36, 36)
-                .addComponent(jLabel4)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(100, 100, 100)
-                .addComponent(jLabel1)
+                .addGap(99, 99, 99)
+                .addComponent(nav_cashier_selected, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
-                .addComponent(jLabel2)
+                .addComponent(nav_inventory, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
-                .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel4)
-                .addGap(103, 103, 103))
+                .addComponent(nav_stat, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(500, 500, 500)
+                .addComponent(nav_logout, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel2.setBackground(new java.awt.Color(245, 249, 252));
@@ -494,6 +518,9 @@ public class FrameCashier extends javax.swing.JFrame {
             }
         });
         tf_cashier_cari.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                tf_cashier_cariKeyPressed(evt);
+            }
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 tf_cashier_cariKeyReleased(evt);
             }
@@ -514,6 +541,7 @@ public class FrameCashier extends javax.swing.JFrame {
 
         {public boolean isCellEditable(int row, int column){return false;}}
     );
+    tabel_barang.setRowHeight(24);
     tabel_barang.addMouseListener(new java.awt.event.MouseAdapter() {
         public void mouseClicked(java.awt.event.MouseEvent evt) {
             tabel_barangMouseClicked(evt);
@@ -564,7 +592,7 @@ public class FrameCashier extends javax.swing.JFrame {
                 .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGap(55, 55, 55)
             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 777, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addContainerGap(88, Short.MAX_VALUE))
+            .addContainerGap(94, Short.MAX_VALUE))
     );
 
     jPanel3.setBackground(new java.awt.Color(255, 255, 255));
@@ -583,6 +611,7 @@ public class FrameCashier extends javax.swing.JFrame {
     )
     {public boolean isCellEditable(int row, int column){return false;}}
     );
+    tabel_keranjang.setRowHeight(24);
     tabel_keranjang.addMouseListener(new java.awt.event.MouseAdapter() {
         public void mouseClicked(java.awt.event.MouseEvent evt) {
             tabel_keranjangMouseClicked(evt);
@@ -719,7 +748,7 @@ public class FrameCashier extends javax.swing.JFrame {
                             .addComponent(tf_cashier_diskon)
                             .addComponent(tf_cashier_dibayarkan, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE))
                         .addComponent(lbl_subtotal, javax.swing.GroupLayout.Alignment.TRAILING))))
-            .addContainerGap(67, Short.MAX_VALUE))
+            .addContainerGap(49, Short.MAX_VALUE))
         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
             .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btn_proses_transaksi, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -765,9 +794,9 @@ public class FrameCashier extends javax.swing.JFrame {
                 .addComponent(jLabel11)
                 .addComponent(jLabel16)
                 .addComponent(lbl_cashier_kembalian))
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGap(26, 26, 26)
             .addComponent(btn_proses_transaksi)
-            .addGap(70, 70, 70))
+            .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
     );
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -784,8 +813,8 @@ public class FrameCashier extends javax.swing.JFrame {
     layout.setVerticalGroup(
         layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
         .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
     );
 
     pack();
@@ -795,32 +824,22 @@ public class FrameCashier extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_tf_cashier_cariActionPerformed
 
-    private void jLabel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseClicked
-
-        if (JOptionPane.showConfirmDialog(null, "Apakah anda ingin menutup aplikasi ini?", "", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION && session.endSession()) {
-            System.exit(0);
-        }
-    }//GEN-LAST:event_jLabel4MouseClicked
-
-    private void jLabel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseClicked
-        // TODO add your handling code here:
-        new FrameStat().setVisible(true);
-        this.dispose();
-    }//GEN-LAST:event_jLabel3MouseClicked
-
-    private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
-        new FrameInventory().setVisible(true);
-        this.dispose();
-    }//GEN-LAST:event_jLabel2MouseClicked
-
-    private void jLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jLabel1MouseClicked
-
     private void tf_cashier_cariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_cashier_cariKeyReleased
         String indexCari = tf_cashier_cari.getText();
         prepareTableBarang();
-        tampilTabelBarang(indexCari);
+        Map<Integer, Map<String, String>> data_cari_barang = new HashMap<>();
+        data_cari_barang = tampilTabelBarang(indexCari);
+
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER && data_cari_barang != null) {
+            int index_selected = 0;
+            Barang.setId_barang(Integer.parseInt(data_cari_barang.get(index_selected).get("id_barang")));
+            Barang.setNama_barang(data_cari_barang.get(index_selected).get("nama_barang"));
+            Barang.setHarga_jual(Integer.parseInt(data_cari_barang.get(index_selected).get("harga_jual")));
+            Barang.setHarga_pokok(Integer.parseInt(data_cari_barang.get(index_selected).get("harga_pokok")));
+            Barang.setStok(Integer.parseInt(data_cari_barang.get(index_selected).get("stok_barang")));
+
+            new FrameTableSearchCashierPopUp().setVisible(true);
+        }
     }//GEN-LAST:event_tf_cashier_cariKeyReleased
 
     private void tabel_barangMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabel_barangMouseClicked
@@ -988,7 +1007,7 @@ public class FrameCashier extends javax.swing.JFrame {
                             truncateTemp();
                             refreshKeranjang();
                             resetPembayaran();
-                        } else { 
+                        } else {
                             JOptionPane.showMessageDialog(null, "Terjadi kesalahan saat memproses pembelian.");
                         }
                     }
@@ -1064,6 +1083,28 @@ public class FrameCashier extends javax.swing.JFrame {
         refreshTabelBarang();
         tf_cashier_cari.setText("");
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void nav_statActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nav_statActionPerformed
+        // TODO add your handling code here:
+        new FrameStat().setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_nav_statActionPerformed
+
+    private void nav_inventoryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nav_inventoryActionPerformed
+        new FrameInventory().setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_nav_inventoryActionPerformed
+
+    private void nav_logoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nav_logoutActionPerformed
+
+        if (JOptionPane.showConfirmDialog(null, "Apakah anda ingin menutup aplikasi ini?", "", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION && session.endSession()) {
+            System.exit(0);
+        }
+    }//GEN-LAST:event_nav_logoutActionPerformed
+
+    private void tf_cashier_cariKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_cashier_cariKeyPressed
+
+    }//GEN-LAST:event_tf_cashier_cariKeyPressed
     private Object[] cariTempTransaksi(int id_barang) {
         try {
             Object[] o = new Object[5];
@@ -1141,7 +1182,6 @@ public class FrameCashier extends javax.swing.JFrame {
     private javax.swing.JButton btn_batal_beli;
     private javax.swing.JButton btn_proses_transaksi;
     private javax.swing.JButton jButton2;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
@@ -1150,9 +1190,6 @@ public class FrameCashier extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
@@ -1164,6 +1201,10 @@ public class FrameCashier extends javax.swing.JFrame {
     private static javax.swing.JLabel lbl_cashier_kembalian;
     private static javax.swing.JLabel lbl_cashier_total;
     private static javax.swing.JLabel lbl_subtotal;
+    private javax.swing.JButton nav_cashier_selected;
+    private javax.swing.JButton nav_inventory;
+    private javax.swing.JButton nav_logout;
+    private javax.swing.JButton nav_stat;
     private static javax.swing.JTable tabel_barang;
     private static javax.swing.JTable tabel_keranjang;
     private javax.swing.JTextField tf_cashier_cari;
