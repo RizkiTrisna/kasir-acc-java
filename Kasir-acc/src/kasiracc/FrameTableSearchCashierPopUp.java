@@ -133,7 +133,7 @@ public class FrameTableSearchCashierPopUp extends javax.swing.JFrame {
             }
             FrameCashier.refreshTabelBarang();
             FrameCashier.refreshKeranjang();
-            
+
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Data gagal ditambahkan ke keranjang\n Error: " + e);
             e.printStackTrace();
@@ -206,7 +206,7 @@ public class FrameTableSearchCashierPopUp extends javax.swing.JFrame {
         jLabel2.setText("Nama Barang");
 
         jLabel3.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
-        jLabel3.setText("Qty");
+        jLabel3.setText("Banyaknya");
 
         jLabel4.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
         jLabel4.setText("Harga");
@@ -293,8 +293,7 @@ public class FrameTableSearchCashierPopUp extends javax.swing.JFrame {
                             .addComponent(btn_tambah, javax.swing.GroupLayout.PREFERRED_SIZE, 342, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGap(118, 118, 118)
-                                .addComponent(btn_batal)
-                                .addGap(127, 127, 127)))
+                                .addComponent(btn_batal)))
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -420,6 +419,10 @@ public class FrameTableSearchCashierPopUp extends javax.swing.JFrame {
             lbl_subtotal.setText(subtotal + "");
 
         }
+
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER && !tf_qty.getText().equals("")) {
+            tambahBarang();
+        }
     }//GEN-LAST:event_tf_qtyKeyReleased
 
     private void tf_qtyKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_qtyKeyTyped
@@ -428,6 +431,10 @@ public class FrameTableSearchCashierPopUp extends javax.swing.JFrame {
     }//GEN-LAST:event_tf_qtyKeyTyped
 
     private void btn_tambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tambahActionPerformed
+        tambahBarang();
+    }//GEN-LAST:event_btn_tambahActionPerformed
+
+    private void tambahBarang() {
 
         int id_admin = session.getSession().getId_admin();
         int qty = Integer.parseInt(tf_qty.getText());
@@ -450,7 +457,6 @@ public class FrameTableSearchCashierPopUp extends javax.swing.JFrame {
 //        } else {
 //            JOptionPane.showMessageDialog(null, "Kolom jumlah barang (Qty) tidak boleh kosong");
 //        }
-        
         //cek apakah qty melebihi stok
         if (!tf_qty.equals("")) {
             if (qty <= stok_lama) {
@@ -473,7 +479,7 @@ public class FrameTableSearchCashierPopUp extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Kolom jumlah barang (Qty) tidak boleh kosong");
         }
 
-    }//GEN-LAST:event_btn_tambahActionPerformed
+    }
 
     private boolean filterAngka(KeyEvent evt) {
         if (Character.isAlphabetic(evt.getKeyChar())) {

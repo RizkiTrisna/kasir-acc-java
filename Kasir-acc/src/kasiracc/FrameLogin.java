@@ -9,6 +9,7 @@ package kasiracc;
  *
  * @author Rizki Trisna
  */
+import java.awt.event.KeyEvent;
 import java.sql.DriverManager;
 import java.sql.Connection;
 import java.sql.Statement;
@@ -118,6 +119,9 @@ public class FrameLogin extends javax.swing.JFrame {
             }
         });
         tf_login_password.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                tf_login_passwordKeyPressed(evt);
+            }
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 tf_login_passwordKeyReleased(evt);
             }
@@ -249,6 +253,19 @@ public class FrameLogin extends javax.swing.JFrame {
     private void tf_login_passwordKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_login_passwordKeyReleased
         // TODO add your handling code here:
     }//GEN-LAST:event_tf_login_passwordKeyReleased
+
+    private void tf_login_passwordKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_login_passwordKeyPressed
+        // TODO add your handling code here: 
+        
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER && !tf_login_username.getText().equals("") && !tf_login_password.getText().equals("")) {
+            masuk();
+        } else if (evt.getKeyCode() == KeyEvent.VK_ENTER && tf_login_username.getText().equals("") && !tf_login_password.getText().equals("")){
+            JOptionPane.showMessageDialog(null, "Field username kosong");
+        } else if (evt.getKeyCode() == KeyEvent.VK_ENTER && !tf_login_username.getText().equals("") && tf_login_password.getText().equals("")){
+            JOptionPane.showMessageDialog(null, "Field password kosong");
+            
+        }
+    }//GEN-LAST:event_tf_login_passwordKeyPressed
 
     private void masuk() {
         String in_username = tf_login_username.getText().toString();

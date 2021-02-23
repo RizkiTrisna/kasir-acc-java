@@ -18,13 +18,17 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.view.JasperViewer;
+import sun.swing.table.DefaultTableCellHeaderRenderer;
 
 /**
  *
@@ -59,6 +63,8 @@ public class FrameCashier extends javax.swing.JFrame {
         tampilTabelBarang();
         tampilKeranjang();
 
+        //set focus mouse pointer 
+        tf_cashier_cari.requestFocusInWindow();
     }
 
     private void setKembalian(int kembalian) {
@@ -123,6 +129,7 @@ public class FrameCashier extends javax.swing.JFrame {
         tmodelBarang.addColumn("Jenis barang");
         tmodelBarang.addColumn("Harga jual");
         tmodelBarang.addColumn("Sisa stok");
+
     }
 
     public static void refreshTabelBarang() {
@@ -131,13 +138,17 @@ public class FrameCashier extends javax.swing.JFrame {
     }
 
     private static void prepareTableKeranjang() {
+//        DefaultTableCellRenderer rightRender = new DefaultTableCellHeaderRenderer();
+//        rightRender.setHorizontalAlignment(JLabel.RIGHT);
+//        tabel_keranjang.getColumnModel().getColumn(4).setCellRenderer(rightRender);
         tmodelKeranjang = new DefaultTableModel();
         tabel_keranjang.setModel(tmodelKeranjang);
         tmodelKeranjang.addColumn("ID");
         tmodelKeranjang.addColumn("Nama barang");
-        tmodelKeranjang.addColumn("Qty");
+        tmodelKeranjang.addColumn("Banyaknya");
         tmodelKeranjang.addColumn("Harga");
         tmodelKeranjang.addColumn("Subtotal");
+
     }
 
     public static void refreshKeranjang() {
@@ -414,6 +425,61 @@ public class FrameCashier extends javax.swing.JFrame {
             e.printStackTrace();
             return false;
         }
+    }
+
+    private void prosesTransaksi() {
+
+        try {
+            String file = "src/struk/strukbelanja.jrxml";
+            HashMap parameter = new HashMap();
+            int diskon = 0;
+            int total = getSumSubtotalKeranjang();
+            int dibayarkan = 0;
+            int kembalian = getKembalian();
+
+            if (!tf_cashier_diskon.getText().equals("")) {
+                System.out.println("diskon ada");
+                diskon = Integer.parseInt(tf_cashier_diskon.getText());
+            }
+
+            if (!tf_cashier_dibayarkan.getText().equals("")) {
+                System.out.println("dibayarkan masuk");
+                dibayarkan = Integer.parseInt(tf_cashier_dibayarkan.getText());
+
+                if ((dibayarkan - total + diskon) < 0) {
+                    // Uang tidak cukup
+                    JOptionPane.showMessageDialog(null, "Jumlah tunai kurang dari total keseluruhan belanja.");
+                } else {
+                    // Uang cukup
+                    if (JOptionPane.showConfirmDialog(null, "Proses Transaksi?\nTransaksi akan tercatat ketika anda memilih \"Ya\"", null, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+
+                        parameter.put("total", total + "");
+                        parameter.put("diskon", diskon + "");
+                        parameter.put("dibayarkan", dibayarkan + "");
+                        parameter.put("kembalian", kembalian + "");
+
+                        JasperReport jasperReport = JasperCompileManager.compileReport(file);
+                        JasperPrint print = JasperFillManager.fillReport(jasperReport, parameter, conn);
+                        JasperViewer.viewReport(print, false);
+
+                        //Pindah dari tabel temp ke tabel transaksi
+                        if (finalizeTransaksi() == true) {
+                            truncateTemp();
+                            refreshKeranjang();
+                            resetPembayaran();
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Terjadi kesalahan saat memproses pembelian.");
+                        }
+                    }
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Nominal pembayaran belum diisi");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Terjadi kesalahan saat memproses pembelian.\n Error: " + e);
+            e.printStackTrace();
+        }
+
     }
 
     @SuppressWarnings("unchecked")
@@ -937,6 +1003,10 @@ public class FrameCashier extends javax.swing.JFrame {
             } else {
                 lbl_cashier_kembalian.setText(convertToCurrency(0));
             }
+
+            if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+                prosesTransaksi();
+            }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Terjadi kesalahan saat jumlah numerikal input di salah satu field melebihi standar.\n Error: " + e);
         }
@@ -969,58 +1039,7 @@ public class FrameCashier extends javax.swing.JFrame {
     private void btn_proses_transaksiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_proses_transaksiActionPerformed
         //        new FrameCetakStrukPopUp().setVisible(true);
 
-        try {
-            String file = "src/struk/strukbelanja.jrxml";
-            HashMap parameter = new HashMap();
-            int diskon = 0;
-            int total = getSumSubtotalKeranjang();
-            int dibayarkan = 0;
-            int kembalian = getKembalian();
-
-            if (!tf_cashier_diskon.getText().equals("")) {
-                System.out.println("diskon ada");
-                diskon = Integer.parseInt(tf_cashier_diskon.getText());
-            }
-
-            if (!tf_cashier_dibayarkan.getText().equals("")) {
-                System.out.println("dibayarkan masuk");
-                dibayarkan = Integer.parseInt(tf_cashier_dibayarkan.getText());
-
-                if ((dibayarkan - total + diskon) < 0) {
-                    // Uang tidak cukup
-                    JOptionPane.showMessageDialog(null, "Jumlah tunai kurang dari total keseluruhan belanja.");
-                } else {
-                    // Uang cukup
-                    if (JOptionPane.showConfirmDialog(null, "Proses Transaksi?\nTransaksi akan tercatat ketika anda memilih \"Ya\"", null, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-
-                        parameter.put("total", total + "");
-                        parameter.put("diskon", diskon + "");
-                        parameter.put("dibayarkan", dibayarkan + "");
-                        parameter.put("kembalian", kembalian + "");
-
-                        JasperReport jasperReport = JasperCompileManager.compileReport(file);
-                        JasperPrint print = JasperFillManager.fillReport(jasperReport, parameter, conn);
-                        JasperViewer.viewReport(print, false);
-
-                        //Pindah dari tabel temp ke tabel transaksi
-                        if (finalizeTransaksi() == true) {
-                            truncateTemp();
-                            refreshKeranjang();
-                            resetPembayaran();
-                        } else {
-                            JOptionPane.showMessageDialog(null, "Terjadi kesalahan saat memproses pembelian.");
-                        }
-                    }
-                }
-            } else {
-                JOptionPane.showMessageDialog(null, "Nominal pembayaran belum diisi");
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Terjadi kesalahan saat memproses pembelian.\n Error: " + e);
-            e.printStackTrace();
-        }
-
-//            prosesTransaksi();
+        prosesTransaksi();
 
     }//GEN-LAST:event_btn_proses_transaksiActionPerformed
 

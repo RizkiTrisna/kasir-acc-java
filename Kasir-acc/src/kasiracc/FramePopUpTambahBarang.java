@@ -5,6 +5,7 @@
  */
 package kasiracc;
 
+import java.awt.event.KeyEvent;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -203,6 +204,11 @@ public class FramePopUpTambahBarang extends javax.swing.JFrame {
                 tf_popupTambah_stokActionPerformed(evt);
             }
         });
+        tf_popupTambah_stok.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                tf_popupTambah_stokKeyReleased(evt);
+            }
+        });
 
         jLabel16.setFont(new java.awt.Font("Assistant SemiBold", 0, 26)); // NOI18N
         jLabel16.setText(":");
@@ -367,6 +373,16 @@ public class FramePopUpTambahBarang extends javax.swing.JFrame {
     }//GEN-LAST:event_cb_popupTambah_jenis_barangActionPerformed
 
     private void btn_tambah_barangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tambah_barangActionPerformed
+        tambahBarang();
+    }//GEN-LAST:event_btn_tambah_barangActionPerformed
+
+    private void tf_popupTambah_stokKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_popupTambah_stokKeyReleased
+
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER ) {
+            tambahBarang();
+        }
+    }//GEN-LAST:event_tf_popupTambah_stokKeyReleased
+    private void tambahBarang() {
         // TODO add your handling code here:
         if ((!tf_popupTambah_namaBarang.getText().equals("") && !tf_popupTambah_hargaJual.getText().equals("") && !tf_popupTambah_hargaPokok.getText().equals("") && !tf_popupTambah_stok.getText().equals(""))) {
 
@@ -394,7 +410,7 @@ public class FramePopUpTambahBarang extends javax.swing.JFrame {
         } else {
             JOptionPane.showMessageDialog(null, "Terdapat field yang masih kosong");
         }
-    }//GEN-LAST:event_btn_tambah_barangActionPerformed
+    }
 
     /**
      * @param args the command line arguments

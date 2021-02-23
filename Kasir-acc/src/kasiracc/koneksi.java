@@ -8,6 +8,7 @@ package kasiracc;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -24,8 +25,9 @@ public class koneksi {
             String pass = "";
             DriverManager.registerDriver(new com.mysql.jdbc.Driver());
             mysqlconfig = DriverManager.getConnection(url, user, pass);
-             
-        } catch (Exception e) { 
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Terjadi kegagalan saat mengambil data MYSQL" + e.getMessage());
             System.out.println("Koneksi gagal: " + e.getMessage());
         }
 
