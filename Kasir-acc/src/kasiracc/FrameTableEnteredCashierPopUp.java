@@ -60,7 +60,7 @@ public class FrameTableEnteredCashierPopUp extends javax.swing.JFrame {
             while (rs.next()) {
                 ob[0] = rs.getInt("id_barang");
                 ob[1] = rs.getInt("id_jenis_barang");
-                ob[2] = rs.getString("nama_barang");
+                ob[2] = rs.getString("nama_barang").substring(0, 14)+"..";
                 ob[3] = rs.getInt("harga_jual");
                 ob[4] = rs.getInt("stok_barang");
             }

@@ -243,6 +243,9 @@ public class FrameLogin extends javax.swing.JFrame {
         if (JOptionPane.showConfirmDialog(null, "Apakah anda ingin menutup aplikasi ini?", "", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION && session.endSession()) {
 
             System.exit(0);
+        } else {
+            //Tetap ditutup meskipun terhadi galat di database
+            System.exit(0);
         }
     }//GEN-LAST:event_jLabel5MouseClicked
 

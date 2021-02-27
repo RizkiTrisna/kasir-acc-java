@@ -62,6 +62,7 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="nav_logout" min="-2" pref="106" max="-2" attributes="0"/>
                               <Component id="jButton2" min="-2" pref="60" max="-2" attributes="0"/>
+                              <Component id="btn_tambah_jenis" alignment="0" min="-2" pref="20" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
@@ -99,7 +100,7 @@
                                   <Component id="jButton2" min="-2" pref="60" max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" attributes="0">
-                                          <EmptySpace min="-2" pref="58" max="-2" attributes="0"/>
+                                          <EmptySpace min="-2" pref="125" max="-2" attributes="0"/>
                                           <Component id="nav_cashier_selected" min="-2" pref="92" max="-2" attributes="0"/>
                                           <EmptySpace min="-2" pref="58" max="-2" attributes="0"/>
                                           <Component id="nav_inventory_selected" min="-2" pref="92" max="-2" attributes="0"/>
@@ -107,13 +108,15 @@
                                           <Component id="nav_stat_selected" min="-2" pref="92" max="-2" attributes="0"/>
                                       </Group>
                                       <Group type="102" alignment="0" attributes="0">
-                                          <EmptySpace min="-2" pref="271" max="-2" attributes="0"/>
+                                          <EmptySpace min="-2" pref="87" max="-2" attributes="0"/>
+                                          <Component id="btn_tambah_jenis" min="-2" max="-2" attributes="0"/>
+                                          <EmptySpace min="-2" pref="230" max="-2" attributes="0"/>
                                           <Component id="nav_logout" min="-2" pref="92" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
                               </Group>
                           </Group>
-                          <EmptySpace pref="431" max="32767" attributes="0"/>
+                          <EmptySpace pref="396" max="32767" attributes="0"/>
                       </Group>
                   </Group>
               </Group>
@@ -228,6 +231,16 @@
               <Image iconType="3" name="/asset/Icon_feather_power.png"/>
             </Property>
           </Properties>
+        </Component>
+        <Component class="javax.swing.JButton" name="btn_tambah_jenis">
+          <Properties>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/asset/plus_mini.png"/>
+            </Property>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_tambah_jenisActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>

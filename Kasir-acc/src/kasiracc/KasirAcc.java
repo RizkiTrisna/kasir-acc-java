@@ -28,5 +28,6 @@ public class KasirAcc {
             FrameLogin.main(args);            
         }
     }
+    
 
 }

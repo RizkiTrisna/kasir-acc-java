@@ -38,6 +38,7 @@ public class res extends javax.swing.JFrame {
         nav_inventory = new javax.swing.JButton();
         nav_stat = new javax.swing.JButton();
         nav_logout = new javax.swing.JButton();
+        btn_tambah_jenis = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -79,6 +80,13 @@ public class res extends javax.swing.JFrame {
         nav_logout.setBackground(new java.awt.Color(70, 87, 117));
         nav_logout.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/Icon_feather_power.png"))); // NOI18N
 
+        btn_tambah_jenis.setIcon(new javax.swing.ImageIcon(getClass().getResource("/asset/plus_mini.png"))); // NOI18N
+        btn_tambah_jenis.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_tambah_jenisActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -103,7 +111,8 @@ public class res extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(nav_logout, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btn_tambah_jenis, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(75, 75, 75)
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 492, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -133,16 +142,18 @@ public class res extends javax.swing.JFrame {
                                 .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addGap(58, 58, 58)
+                                        .addGap(125, 125, 125)
                                         .addComponent(nav_cashier_selected, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(58, 58, 58)
                                         .addComponent(nav_inventory_selected, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(58, 58, 58)
                                         .addComponent(nav_stat_selected, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addGap(271, 271, 271)
+                                        .addGap(87, 87, 87)
+                                        .addComponent(btn_tambah_jenis)
+                                        .addGap(230, 230, 230)
                                         .addComponent(nav_logout, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                        .addContainerGap(431, Short.MAX_VALUE))))
+                        .addContainerGap(396, Short.MAX_VALUE))))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -162,6 +173,10 @@ public class res extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
          
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void btn_tambah_jenisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tambah_jenisActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btn_tambah_jenisActionPerformed
 
     /**
      * @param args the command line arguments
@@ -199,6 +214,7 @@ public class res extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btn_tambah_jenis;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton4;
