@@ -23,12 +23,10 @@ public class FrameTambahJenisBarang extends javax.swing.JFrame {
     /**
      * Creates new form FrameTambahJenisBarang
      */
-    
-    private static Connection conn ;
+    private static Connection conn;
     private static Statement stmt;
     private static ResultSet tes;
-    
-    
+
     public FrameTambahJenisBarang() {
         setUndecorated(true);
         initComponents();
@@ -40,10 +38,11 @@ public class FrameTambahJenisBarang extends javax.swing.JFrame {
         }
     }
 
-    private void getKoneksi() throws SQLException  {
+    private void getKoneksi() throws SQLException {
         koneksi kon = new koneksi();
         conn = kon.getConnection();
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -157,23 +156,26 @@ public class FrameTambahJenisBarang extends javax.swing.JFrame {
     }//GEN-LAST:event_tf_jenisActionPerformed
 
     private void btn_tambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tambahActionPerformed
-        String nama_jenis = tf_jenis.getText();
-        if (!nama_jenis.equals("")){
-            try {
-                // field tidak kosong
-                String query = "INSERT INTO jenis_barang(nama_jenis) VALUES('"+nama_jenis+"')";
-                PreparedStatement pst = conn.prepareStatement(query);
-                pst.execute();
-                FrameInventory.tampilCombobox();
-                JOptionPane.showMessageDialog(null, "Data jenis barang berhasil ditambahkan");
-                this.dispose();
-            } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(null, "Data jenis barang gagal ditambahkan\n"+ex.getMessage());
-                Logger.getLogger(FrameTambahJenisBarang.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } else {
-            // Fielsd kososng
-            JOptionPane.showMessageDialog(null, "Field tidak boleh kosong");
+        int hasil = JOptionPane.showConfirmDialog(null, "Tambahkan data jenis baru ini?", "", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (hasil == JOptionPane.YES_OPTION && !tf_jenis.getText().equals("")) {
+
+            String nama_jenis = tf_jenis.getText();
+            if (!nama_jenis.equals("")) {
+                try {
+                    // field tidak kosong
+                    String query = "INSERT INTO jenis_barang(nama_jenis) VALUES('" + nama_jenis + "')";
+                    PreparedStatement pst = conn.prepareStatement(query);
+                    pst.execute();
+                    FrameInventory.tampilCombobox();
+                    JOptionPane.showMessageDialog(null, "Data jenis barang berhasil ditambahkan");
+                    this.dispose();
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(null, "Data jenis barang gagal ditambahkan\n" + ex.getMessage());
+                    Logger.getLogger(FrameTambahJenisBarang.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } 
+        } else if ( tf_jenis.getText().equals("")) { 
+            JOptionPane.showMessageDialog(null, "Field tidak boleh kosong" );
         }
     }//GEN-LAST:event_btn_tambahActionPerformed
 
