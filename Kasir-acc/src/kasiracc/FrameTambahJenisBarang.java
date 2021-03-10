@@ -172,7 +172,7 @@ public class FrameTambahJenisBarang extends javax.swing.JFrame {
                 } catch (SQLException ex) {
                     JOptionPane.showMessageDialog(null, "Data jenis barang gagal ditambahkan\n" + ex.getMessage());
                     Logger.getLogger(FrameTambahJenisBarang.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                } 
             } 
         } else if ( tf_jenis.getText().equals("")) { 
             JOptionPane.showMessageDialog(null, "Field tidak boleh kosong" );

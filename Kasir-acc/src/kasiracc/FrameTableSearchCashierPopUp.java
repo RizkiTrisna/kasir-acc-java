@@ -57,7 +57,11 @@ public class FrameTableSearchCashierPopUp extends javax.swing.JFrame {
 
     private void setDetail() {
         lbl_id.setText(Barang.getId_barang() + "");
-        lbl_nm_barang.setText(Barang.getNama_barang().substring(0, 14)+".." + "");
+        if (Barang.getNama_barang().length() > 14) { 
+            lbl_nm_barang.setText(Barang.getNama_barang().substring(0, 14) + ".." + "");
+        } else {
+            lbl_nm_barang.setText(Barang.getNama_barang() );
+        }
         lbl_harga.setText(Barang.getHarga_jual() + "");
         lbl_subtotal.setText(Barang.getHarga_jual() + "");
         lbl_id.setText(Barang.getId_barang() + "");
